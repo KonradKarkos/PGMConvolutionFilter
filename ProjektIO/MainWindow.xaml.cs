@@ -18,6 +18,7 @@ namespace ProjektIO
     {
         int threadcount = 10;
         private MyImage obraz;
+        int wymiar;
         //kontener na wyniki funkcji procesów
         float[][] pojemnik;
         public MainWindow()
@@ -113,19 +114,37 @@ namespace ProjektIO
                     //wygenerowanie pustego obrazu 1024x1024 w wypadku zaznaczenia takiej opcji
                     if (domyslny.IsChecked == true)
                     {
-                        obraz = new MyImage(1024, 1024);
-                        pojemnik = new float[threadcount + 1][];
-                        //wypełnienie kontenera pustymi tablicami
-                        for (int i = 0; i <= threadcount; i++)
+                        if(BoxWYmiary.Text.Length<=0)
                         {
-                            pojemnik[i] = new float[1024 * 1024];
+                            BoxWYmiary.Text = "1024";
                         }
-                        //odblokowanie przycisku "Start"
-                        button1.IsEnabled = true;
-                        //poinformowanie użytkownika opowiednimi komunikatami o zakończeniu akcji
-                        if (textBox.Text.Length > 0) textBox.Text += '\n';
-                        textBox.Text += "==============================================" + '\n' + "Wczytano obraz domyśny.";
-                        MessageBox.Show("Wczytywanie zakończone.");
+                        if (Int32.TryParse(BoxWYmiary.Text, out wymiar))
+                        {
+                            if (wymiar > threadcount - 2 && wymiar*wymiar<Int32.MaxValue)
+                            {
+                                obraz = new MyImage(wymiar, wymiar);
+                                pojemnik = new float[threadcount + 1][];
+                                //wypełnienie kontenera pustymi tablicami
+                                for (int i = 0; i <= threadcount; i++)
+                                {
+                                    pojemnik[i] = new float[wymiar * wymiar];
+                                }
+                                //odblokowanie przycisku "Start"
+                                button1.IsEnabled = true;
+                                //poinformowanie użytkownika opowiednimi komunikatami o zakończeniu akcji
+                                if (textBox.Text.Length > 0) textBox.Text += '\n';
+                                textBox.Text += "==============================================" + '\n' + "Wczytano obraz domyśny o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text;
+                                MessageBox.Show("Wczytywanie zakończone.");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Podano zbyt mały lub zbyt duży wymiar obrazu domyślnego.");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Nieudana konwersja typu. Podany wymiar jest zbyt mały lub zbyt duży dla typu Int32.");
+                        }
                     }
                     //wczytanie obrazu z podanej ścieżki
                     else
@@ -430,7 +449,7 @@ namespace ProjektIO
                 else
                 {
                     sb.AppendLine("P5");
-                    sb.AppendLine("1024 1024");
+                    sb.AppendLine(wymiar + " " + wymiar);
                     sb.AppendLine("255");
                 }
                 int height = testowy.Size[0];
@@ -535,7 +554,7 @@ namespace ProjektIO
                 else
                 {
                     sb.AppendLine("P5");
-                    sb.AppendLine("1024 1024");
+                    sb.AppendLine(wymiar+" "+wymiar);
                     sb.AppendLine("255");
                 }
                 for (int i = 0; i < height; i++)
@@ -573,6 +592,7 @@ namespace ProjektIO
             BoxKonBin.Text = BoxPoczBin.Text.Insert(BoxPoczBin.Text.Length - 4, "Koncowy");
             BoxObrazKon.Text = BoxPoczBin.Text.Remove(BoxPoczBin.Text.Length - 4, 4).Insert(BoxPoczBin.Text.Length - 4, ".png");
             BoxTxtKon.Text = BoxPoczBin.Text.Remove(BoxPoczBin.Text.Length - 4, 4).Insert(BoxPoczBin.Text.Length - 4, ".txt");
+            BoxWYmiary.IsEnabled = false;
         }
 
         private void Domyslny_Unchecked(object sender, RoutedEventArgs e)
@@ -581,6 +601,7 @@ namespace ProjektIO
             BoxKonBin.Text = "";
             BoxObrazKon.Text = "";
             BoxTxtKon.Text = "";
+            BoxWYmiary.IsEnabled = true;
         }
 
         private void BZapiszObraz_Click(object sender, RoutedEventArgs e)
@@ -727,5 +748,10 @@ namespace ProjektIO
             MessageBox.Show("Poprawnie zapisano do pliku.");
         }
 
+        private void BoxWYmiary_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(BlockWymiar2!=null)
+            BlockWymiar2.Text = 'x' + BoxWYmiary.Text;
+        }
     }
 }
