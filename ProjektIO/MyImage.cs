@@ -113,7 +113,7 @@ namespace ProjektIO
                     if (((i / liczba_pikseli_na_pole_h) + (j / liczba_pikseli_na_pole_w)) % 2 == 0)
                         values[index] = 0;
                     else
-                        values[index] = 1;
+                        values[index] = 255;
                 }
             }
         }

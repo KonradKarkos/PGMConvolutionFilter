@@ -21,24 +21,26 @@
                     <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Wyniki działania programu:" VerticalAlignment="Top"/>
                     <Button x:Name="button" Content="Pomoc" HorizontalAlignment="Left" Margin="703,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
                     <Button x:Name="button1" Content="Start" HorizontalAlignment="Left" Margin="703,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="Button1_Click"/>
-                    <Button x:Name="BZapiszObraz" Content="Zapisz jako obraz" HorizontalAlignment="Left" Margin="403,271,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszObraz_Click" IsEnabled="False"/>
-                    <TextBox x:Name="BoxObrazKon" HorizontalAlignment="Left" Height="19" Margin="403,295,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-                    <Button x:Name="BWczytajPocz" Content="Wczytaj z pliku" HorizontalAlignment="Left" Margin="403,127,0,0" VerticalAlignment="Top" Width="185" Click="BWczytajObraz_Click" IsEnabled="False"/>
-                    <Button x:Name="BZapiszBin" Content="Zapisz do pliku binarnego" HorizontalAlignment="Left" Margin="403,175,0,0" VerticalAlignment="Top" Width="375" IsEnabled="False" Click="BZapiszBin_Click"/>
-                    <TextBox x:Name="BoxPoczBin" HorizontalAlignment="Left" Height="19" Margin="403,151,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375" IsEnabled="False" TextChanged="BoxPoczBin_TextChanged"/>
-                    <TextBox x:Name="BoxKonBin" HorizontalAlignment="Left" Height="19" Margin="403,199,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-                    <Button x:Name="BWybierz_Bin" Content="Wybierz plik" HorizontalAlignment="Left" Margin="593,127,0,0" VerticalAlignment="Top" Width="185" Click="Wybierz_Bin_Click"/>
-                    <Button x:Name="BZapiszTxt" Content="Zapisz jako txt" HorizontalAlignment="Left" Margin="403,223,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszTxt_Click" IsEnabled="False"/>
-                    <TextBox x:Name="BoxTxtKon" HorizontalAlignment="Left" Height="19" Margin="403,247,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-                    <CheckBox x:Name="domyslny" Content="Użyj domyślnego pustego obrazu" HorizontalAlignment="Left" Margin="403,364,0,0" VerticalAlignment="Top" Checked="Domyslny_Checked" Unchecked="Domyslny_Unchecked"/>
-                    <ProgressBar x:Name="PB" HorizontalAlignment="Left" Height="29" Margin="403,93,0,0" VerticalAlignment="Top" Width="375" Maximum="400" Visibility="Hidden" Value="0" Minimum="0"/>
-                    <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="403,343,0,0" TextWrapping="Wrap" Text="Ilość iteracji:" VerticalAlignment="Top"/>
-                    <TextBox x:Name="BoxIteracje" HorizontalAlignment="Left" Height="16" Margin="473,343,0,0" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
-                    <TextBlock x:Name="textBlock4" HorizontalAlignment="Left" Margin="598,343,0,0" TextWrapping="Wrap" Text="Ilość wątków:" VerticalAlignment="Top"/>
-                    <TextBox x:Name="BoxWatki" HorizontalAlignment="Left" Height="16" Margin="673,343,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="105" PreviewTextInput="Sprawdz_liczby"/>
-                    <Button x:Name="BZapisz" Content="Zapisz wyniki do pliku" HorizontalAlignment="Left" Margin="403,319,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszWyniki_Click"/>
+                    <Button x:Name="BZapiszObraz" Content="Zapisz jako obraz" HorizontalAlignment="Left" Margin="403,249,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszObraz_Click" IsEnabled="False"/>
+                    <TextBox x:Name="BoxObrazKon" HorizontalAlignment="Left" Height="19" Margin="403,273,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
+                    <Button x:Name="BWczytajPocz" Content="Wczytaj z pliku" HorizontalAlignment="Left" Margin="403,105,0,0" VerticalAlignment="Top" Width="185" Click="BWczytajObraz_Click" IsEnabled="False"/>
+                    <Button x:Name="BZapiszBin" Content="Zapisz do pliku binarnego" HorizontalAlignment="Left" Margin="403,153,0,0" VerticalAlignment="Top" Width="375" IsEnabled="False" Click="BZapiszBin_Click"/>
+                    <TextBox x:Name="BoxPoczBin" HorizontalAlignment="Left" Height="19" Margin="403,129,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375" IsEnabled="False" TextChanged="BoxPoczBin_TextChanged"/>
+                    <TextBox x:Name="BoxKonBin" HorizontalAlignment="Left" Height="19" Margin="403,177,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
+                    <Button x:Name="BWybierz_Bin" Content="Wybierz plik" HorizontalAlignment="Left" Margin="593,105,0,0" VerticalAlignment="Top" Width="185" Click="Wybierz_Bin_Click"/>
+                    <Button x:Name="BZapiszTxt" Content="Zapisz jako txt" HorizontalAlignment="Left" Margin="403,201,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszTxt_Click" IsEnabled="False"/>
+                    <TextBox x:Name="BoxTxtKon" HorizontalAlignment="Left" Height="19" Margin="403,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
+                    <CheckBox x:Name="domyslny" Content="Użyj domyślnego pustego obrazu" HorizontalAlignment="Left" Margin="403,362,0,0" VerticalAlignment="Top" Checked="Domyslny_Checked" Unchecked="Domyslny_Unchecked"/>
+                    <ProgressBar x:Name="PB" HorizontalAlignment="Left" Height="29" Margin="403,71,0,0" VerticalAlignment="Top" Width="375" Maximum="400" Visibility="Hidden" Value="0" Minimum="0"/>
+                    <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="403,321,0,0" TextWrapping="Wrap" Text="Ilość iteracji:" VerticalAlignment="Top"/>
+                    <TextBox x:Name="BoxIteracje" HorizontalAlignment="Left" Height="16" Margin="473,321,0,0" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
+                    <TextBlock x:Name="textBlock4" HorizontalAlignment="Left" Margin="598,321,0,0" TextWrapping="Wrap" Text="Ilość wątków:" VerticalAlignment="Top"/>
+                    <TextBox x:Name="BoxWatki" HorizontalAlignment="Left" Height="16" Margin="673,321,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="105" PreviewTextInput="Sprawdz_liczby"/>
+                    <Button x:Name="BZapisz" Content="Zapisz wyniki do pliku" HorizontalAlignment="Left" Margin="403,297,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszWyniki_Click"/>
                     <TextBox x:Name="BoxWYmiary" HorizontalAlignment="Left" Height="17" Margin="606,362,0,0" TextWrapping="Wrap" Text="1024" VerticalAlignment="Top" Width="39" PreviewTextInput="Sprawdz_liczby" TextChanged="BoxWYmiary_TextChanged"/>
                     <TextBlock x:Name="BlockWymiar2" HorizontalAlignment="Left" Margin="650,362,0,0" TextWrapping="Wrap" Text="x1024" VerticalAlignment="Top" Width="38"/>
+                    <CheckBox x:Name="CheckSzachownica" Content="Zamień go na szachownicę o podanej liczbie pól:" HorizontalAlignment="Left" Margin="403,342,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+                    <TextBox x:Name="BoxSzachownica" HorizontalAlignment="Left" Height="17" Margin="686,340,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="33" IsEnabled="False" PreviewTextInput="Sprawdz_liczby"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Tekstowe">

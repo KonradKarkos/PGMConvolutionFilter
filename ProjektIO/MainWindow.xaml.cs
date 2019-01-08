@@ -111,6 +111,7 @@ namespace ProjektIO
             {
                 if (threadcount < 1000)
                 {
+                    StringBuilder sb = new StringBuilder();
                     //wygenerowanie pustego obrazu 1024x1024 w wypadku zaznaczenia takiej opcji
                     if (domyslny.IsChecked == true)
                     {
@@ -123,11 +124,50 @@ namespace ProjektIO
                             if (wymiar > threadcount - 2 && wymiar*wymiar<Int32.MaxValue)
                             {
                                 obraz = new MyImage(wymiar, wymiar);
+                                if(CheckSzachownica.IsChecked==true && CheckSzachownica.IsEnabled==true)
+                                {
+                                    int IloscPikseli;
+                                    if (!Int32.TryParse(BoxSzachownica.Text, out IloscPikseli))
+                                    {
+                                        MessageBox.Show("Błąd przy konwersji podanej liczby pikseli w na pole szachownicy. Spróbuj zmniejszyć liczbę pikseli.");
+                                    }
+                                    else
+                                    {
+                                        if(IloscPikseli>wymiar)
+                                        {
+                                            MessageBox.Show("Podano zbyt dużą ilość pikseli dla danego wymiaru! Zostanie utworzony prosty obraz domyślny.");
+                                        }
+                                        else
+                                        {
+                                            obraz.CreateCheckerboard(IloscPikseli);
+                                        }
+                                    }
+                                }
+                                sb.AppendLine("P5");
+                                sb.AppendLine(wymiar + " " + wymiar);
+                                sb.AppendLine("255");
+                                for (int i = 0; i < wymiar; i++)
+                                {
+                                    for (int j = 0; j < wymiar; j++)
+                                    {
+                                        sb.Append(obraz.Values[i * wymiar + j] + " ");
+                                    }
+                                    sb.AppendLine();
+                                }
+                                DisplayBoxPocz.Text += sb.ToString();
+                                image.Source = BitmapToImageSource(ImagetoBitMap(obraz));
                                 //odblokowanie przycisku "Start"
                                 button1.IsEnabled = true;
                                 //poinformowanie użytkownika opowiednimi komunikatami o zakończeniu akcji
                                 if (textBox.Text.Length > 0) textBox.Text += '\n';
-                                textBox.Text += "==============================================" + '\n' + "Wczytano obraz domyśny o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text;
+                                if (CheckSzachownica.IsChecked == true && CheckSzachownica.IsEnabled == true)
+                                {
+                                    textBox.Text += "==============================================" + '\n' + "Wczytano szachownicę o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text + " i "+BoxSzachownica.Text+" polach.";
+                                }
+                                else
+                                {
+                                    textBox.Text += "==============================================" + '\n' + "Wczytano obraz domyśny o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text;
+                                }
                                 MessageBox.Show("Wczytywanie zakończone.");
                             }
                             else
@@ -147,7 +187,6 @@ namespace ProjektIO
                         {
                             Stopwatch sw = new Stopwatch();
                             sw.Start();
-                            StringBuilder sb = new StringBuilder();
                             BinaryReader br = new BinaryReader(File.Open(BoxPoczBin.Text, FileMode.Open));
                             //wczytanie wersji pliku pgm
                             String wersja = WczytajLinie(br);
@@ -557,6 +596,8 @@ namespace ProjektIO
             BoxObrazKon.Text = BoxPoczBin.Text.Remove(BoxPoczBin.Text.Length - 4, 4).Insert(BoxPoczBin.Text.Length - 4, ".png");
             BoxTxtKon.Text = BoxPoczBin.Text.Remove(BoxPoczBin.Text.Length - 4, 4).Insert(BoxPoczBin.Text.Length - 4, ".txt");
             BoxWYmiary.IsEnabled = false;
+            CheckSzachownica.IsEnabled = true;
+            BoxSzachownica.IsEnabled = true;
         }
 
         private void Domyslny_Unchecked(object sender, RoutedEventArgs e)
@@ -566,6 +607,8 @@ namespace ProjektIO
             BoxObrazKon.Text = "";
             BoxTxtKon.Text = "";
             BoxWYmiary.IsEnabled = true;
+            CheckSzachownica.IsEnabled = false;
+            BoxSzachownica.IsEnabled = false;
         }
 
         private void BZapiszObraz_Click(object sender, RoutedEventArgs e)
