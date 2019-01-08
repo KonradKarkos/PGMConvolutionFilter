@@ -123,23 +123,25 @@ namespace ProjektIO
                         {
                             if (wymiar > threadcount - 2 && wymiar*wymiar<Int32.MaxValue)
                             {
+                                bool udane = false;
                                 obraz = new MyImage(wymiar, wymiar);
                                 if(CheckSzachownica.IsChecked==true && CheckSzachownica.IsEnabled==true)
                                 {
                                     int IloscPikseli;
                                     if (!Int32.TryParse(BoxSzachownica.Text, out IloscPikseli))
                                     {
-                                        MessageBox.Show("Błąd przy konwersji podanej liczby pikseli w na pole szachownicy. Spróbuj zmniejszyć liczbę pikseli.");
+                                        MessageBox.Show("Błąd przy konwersji podanej liczby pól szachownicy. Spróbuj zmniejszyć liczbę pikseli.");
                                     }
                                     else
                                     {
                                         if(IloscPikseli>wymiar)
                                         {
-                                            MessageBox.Show("Podano zbyt dużą ilość pikseli dla danego wymiaru! Zostanie utworzony prosty obraz domyślny.");
+                                            MessageBox.Show("Podano zbyt dużą ilość pól danego wymiaru! Zostanie utworzony prosty obraz domyślny.");
                                         }
                                         else
                                         {
                                             obraz.CreateCheckerboard(IloscPikseli);
+                                            udane = true;
                                         }
                                     }
                                 }
@@ -160,7 +162,7 @@ namespace ProjektIO
                                 button1.IsEnabled = true;
                                 //poinformowanie użytkownika opowiednimi komunikatami o zakończeniu akcji
                                 if (textBox.Text.Length > 0) textBox.Text += '\n';
-                                if (CheckSzachownica.IsChecked == true && CheckSzachownica.IsEnabled == true)
+                                if (CheckSzachownica.IsChecked == true && CheckSzachownica.IsEnabled == true && udane)
                                 {
                                     textBox.Text += "==============================================" + '\n' + "Wczytano szachownicę o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text + " i "+BoxSzachownica.Text+" polach.";
                                 }
