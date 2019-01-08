@@ -57,11 +57,11 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Image x:Name="image" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" VerticalAlignment="Top" Width="375"/>
-                    <Image x:Name="image_Copy" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375"/>
+                    <Image x:Name="image_Copy" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Visible"/>
                     <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Obraz początkowy w formacie PGM:" VerticalAlignment="Top"/>
                     <TextBlock x:Name="textBlock1_Copy" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Obraz końcowy:" VerticalAlignment="Top"/>
                     <Button x:Name="BSwitchImg" Content="Synchroniczny" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="BSwitchImg_Click"/>
-                    <Image x:Name="image_Copy1" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375"/>
+                    <Image x:Name="image_Copy1" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Hidden"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -20,7 +20,7 @@ namespace ProjektIO
         private MyImage obraz;
         int wymiar;
         //kontener na wyniki funkcji procesów
-        float[][] pojemnik;
+        float[] Wartosci;
         public MainWindow()
         {
             InitializeComponent();
@@ -123,12 +123,6 @@ namespace ProjektIO
                             if (wymiar > threadcount - 2 && wymiar*wymiar<Int32.MaxValue)
                             {
                                 obraz = new MyImage(wymiar, wymiar);
-                                pojemnik = new float[threadcount + 1][];
-                                //wypełnienie kontenera pustymi tablicami
-                                for (int i = 0; i <= threadcount; i++)
-                                {
-                                    pojemnik[i] = new float[wymiar * wymiar];
-                                }
                                 //odblokowanie przycisku "Start"
                                 button1.IsEnabled = true;
                                 //poinformowanie użytkownika opowiednimi komunikatami o zakończeniu akcji
@@ -176,11 +170,6 @@ namespace ProjektIO
                                     //wczytanie maksymalnej wartości koloru piksela w tym pliku
                                     int max = Int32.Parse(WczytajLinie(br));
                                     sb.AppendLine(max.ToString());
-                                    pojemnik = new float[threadcount + 1][];
-                                    for (int i = 0; i <= threadcount; i++)
-                                    {
-                                        pojemnik[i] = new float[height * width];
-                                    }
                                     if (max > 255)
                                     {
                                         MessageBox.Show("Zbyt duża wartość maksymalna piksela - " + max);
@@ -313,7 +302,8 @@ namespace ProjektIO
             int koniec = (int)((object[])dane)[4];
             int numer = (int)((object[])dane)[5];
             CountdownEvent c = (CountdownEvent)((object[])dane)[6];
-            float[] nowe = new float[values.Length];
+            //CountdownEvent c2 = (CountdownEvent)((object[])dane)[7];
+            //float[] nowe = new float[values.Length];
             int index;
             //pominięcie pierwszego wiersza pikseli aby nie wychodzić poza zakres
             if (poczatek == 0) poczatek++;
@@ -324,7 +314,7 @@ namespace ProjektIO
                 for (int j = 1; j < width - 1; j++)
                 {
                     index = i * width + j;
-                    nowe[index] =
+                    Wartosci[index] =
                         values[index] * 0.6f +
                         values[index + 1] * 0.1f +
                         values[index - 1] * 0.1f +
@@ -332,7 +322,6 @@ namespace ProjektIO
                         values[index - width] * 0.1f;
                 }
             }
-            pojemnik[numer] = nowe;
             c.Signal();
         }
         //funkcja z której korzystają wątki aplikujące filtr na brzegach
@@ -342,10 +331,11 @@ namespace ProjektIO
             int width = (int)((object[])dane)[1];
             float[] values = (float[])((object[])dane)[2];
             CountdownEvent c = (CountdownEvent)((object[])dane)[3];
-            float[] nowe = new float[values.Length];
+            //CountdownEvent c2 = (CountdownEvent)((object[])dane)[4];
+            //float[] nowe = new float[values.Length];
             for (int i = 1; i < width - 1; i++)
             { // ^- pierwszy wiersz pikseli obrazka
-                nowe[i] =
+                Wartosci[i] =
                     values[i] * 0.6f +
                     values[i + 1] * 0.1f +
                     values[i - 1] * 0.1f +
@@ -353,7 +343,7 @@ namespace ProjektIO
             }
             for (int i = height * (width - 1) + 1; i < width * height - 1; i++)
             { // v- ostatni wiersz pikseli obrazka
-                nowe[i] =
+                Wartosci[i] =
                     values[i] * 0.6f +
                     values[i + 1] * 0.1f +
                     values[i - 1] * 0.1f +
@@ -361,7 +351,7 @@ namespace ProjektIO
             }
             for (int i = width; i < height * (width - 1); i += width)
             { // <| pierwsza kolumna pikseli obrazka
-                nowe[i] =
+                Wartosci[i] =
                     values[i] * 0.6f +
                     values[i + 1] * 0.1f +
                     values[i + width] * 0.1f +
@@ -369,213 +359,187 @@ namespace ProjektIO
             }
             for (int i = 2 * width - 1; i < height * width - 1; i += width)
             { // >| ostatnia kolumna pikseli obrazka
-                nowe[i] =
+                Wartosci[i] =
                     values[i] * 0.6f +
                     values[i - 1] * 0.1f +
                     values[i + width] * 0.1f +
                     values[i - width] * 0.1f;
             }
             //piksel w lewym górnym rogu obrazka
-            nowe[0] =
+            Wartosci[0] =
                     values[0] * 0.6f +
                     //piksel na prawo
                     values[0 + 1] * 0.1f +
                     //piksel pod nim
                     values[0 + width] * 0.1f;
             //piksel w prawym górnym rogu
-            nowe[width - 1] =
+            Wartosci[width - 1] =
                     values[width - 1] * 0.6f +
                     //piksel na lewo
                     values[width - 1 - 1] * 0.1f +
                     //piksel pod nim
                     values[width - 1 + width] * 0.1f;
             //piksel w lewym dolnym rogu
-            nowe[height * (width - 1)] =
+            Wartosci[height * (width - 1)] =
                     values[height * (width - 1)] * 0.6f +
                     //piksel nad nim
                     values[height * (width - 1) - width] * 0.1f +
                     //piksel na prawo
                     values[height * (width - 1) + 1] * 0.1f;
             //piksel w prawym dolnym rogu
-            nowe[height * width - 1] =
+            Wartosci[height * width - 1] =
                     values[height * width - 1] * 0.6f +
                     //piksel na lewo
                     values[height * width - 1 - 1] * 0.1f +
                     //piksel nad nim
                     values[height * width - 1 - width] * 0.1f;
-            pojemnik[threadcount] = nowe;
             c.Signal();
         }
 
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
+            button1.IsEnabled = false;
             int iteracje;
-            if (!Int32.TryParse(BoxIteracje.Text, out iteracje))
+            if (!Int32.TryParse(BoxWatki.Text, out threadcount))
             {
-                MessageBox.Show("Nieudana konwersja ilości iteracji, spróbuj zmniejszyć ilość potencjalnych iteracji.");
+                MessageBox.Show("Nieudana konwersja typu przy konwersji ilości wątków.");
             }
             else
             {
-                textBox.Text += '\n' + "Ustawiona ilość iteracji: " + iteracje + '\n' + "Ustawiona ilość wątków: " + threadcount;
-                PB.Maximum = iteracje * 2;
-                PB.Visibility = Visibility.Visible;
-                MyImage testowy = obraz;
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                //synchroniczne nałożenie filtru
-                for (int i = 0; i < iteracje; i++)
+                if (threadcount > 1000 || obraz.Size[0] < threadcount - 2)
                 {
-                    testowy = testowy.convolution();
-                    this.Dispatcher.Invoke(() => { PB.Value++; }, DispatcherPriority.ContextIdle);
+                    MessageBox.Show("Podano zbyt dużą ilość wątków!");
                 }
-                sw.Stop();
-                StringBuilder sb = new StringBuilder();
-                int wordcount = 4;
-                int indeks = 0;
-                String tekst = DisplayBoxPocz.Text;
-                //wczytanie czterech wartości: wersji, szerokości, wysokości i maksymalnej wartości piksela jeśli nie jest to obraz domyślny
-                if (domyslny.IsChecked == false)
-                {
-                    char c;
-                    while (wordcount > 0)
-                    {
-                        c = tekst[indeks];
-                        sb.Append(c);
-                        if (c.Equals('\n') || c.Equals(' ')) wordcount--;
-                        indeks++;
-                    }
-                }
-                //dołączenie wartości dla domyślnego obrazu
                 else
                 {
-                    sb.AppendLine("P5");
-                    sb.AppendLine(wymiar + " " + wymiar);
-                    sb.AppendLine("255");
-                }
-                int height = testowy.Size[0];
-                int width = testowy.Size[1];
-                float[] wartosci = testowy.Values;
-                //wczytanie wartości uzyskanych w wersji synchronicznej
-                for (int i = 0; i < height; i++)
-                {
-                    for (int j = 0; j < width; j++)
+                    if (!Int32.TryParse(BoxIteracje.Text, out iteracje))
                     {
-                        sb.Append(wartosci[i * height + j] + " ");
+                        MessageBox.Show("Nieudana konwersja ilości iteracji, spróbuj zmniejszyć ilość potencjalnych iteracji.");
                     }
-                    sb.AppendLine();
-                }
-                //wyświetlenie danych uzyskanych w wersji synchronicznej
-                DisplayBoxKon.Text = sb.ToString();
-                //wyświetlenie obrazu uzyskanego synchronicznie
-                image_Copy.Source = BitmapToImageSource(ImagetoBitMap(testowy));
-                textBox.Text += '\n' + "Czas zastosowania filtru splotowego w wersji synchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
-                //wersja asynchroniczna
-                testowy = obraz;
-                //wyznaczenie obszarów obliczeń dla wątków
-                int podzielone = height / threadcount;
-                //event służący do zasygnalizowania wątkowi głównemu kiedy może zsumować wyniki obliczeń wątków
-                CountdownEvent countdownEvent;
-                wartosci = testowy.Values;
-                indeks = 0;
-                sw.Restart();
-                for (int i = 0; i < iteracje; i++)
-                {
-                    countdownEvent = new CountdownEvent(threadcount + 1);
-                    for (int j = 0; j < threadcount; j++)
+                    else
                     {
-                        ThreadPool.QueueUserWorkItem(normalny, new object[] { height, width, wartosci, podzielone * j, podzielone * (j + 1), j, countdownEvent });
-                    }
-                    ThreadPool.QueueUserWorkItem(boczny, new object[] { height, width, wartosci, countdownEvent });
-                    //czekanie aż wszystkie wątki skończą obliczenia
-                    countdownEvent.Wait();
-                    for (int j = 0; j < threadcount - 1; j++)
-                    {
-                        for (int z = podzielone * j; z < podzielone * (j + 1); z++)
+                        textBox.Text += '\n' + "Ustawiona ilość iteracji: " + iteracje + '\n' + "Ustawiona ilość wątków: " + threadcount;
+                        PB.Maximum = iteracje * 2;
+                        PB.Visibility = Visibility.Visible;
+                        MyImage testowy = obraz;
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
+                        //synchroniczne nałożenie filtru
+                        for (int i = 0; i < iteracje; i++)
                         {
-                            indeks = z * width;
-                            for (int u = 1; u < width - 1; u++)
+                            testowy = testowy.convolution();
+                        }
+                        sw.Stop();
+                        this.Dispatcher.Invoke(() => { PB.Value = PB.Maximum / 2; ; }, DispatcherPriority.ContextIdle);
+                        StringBuilder sb = new StringBuilder();
+                        int wordcount = 4;
+                        int indeks = 0;
+                        String tekst = DisplayBoxPocz.Text;
+                        //wczytanie czterech wartości: wersji, szerokości, wysokości i maksymalnej wartości piksela jeśli nie jest to obraz domyślny
+                        if (domyslny.IsChecked == false)
+                        {
+                            char c;
+                            while (wordcount > 0)
                             {
-                                wartosci[indeks + u] = pojemnik[j][indeks + u];
+                                c = tekst[indeks];
+                                sb.Append(c);
+                                if (c.Equals('\n') || c.Equals(' ')) wordcount--;
+                                indeks++;
                             }
                         }
-                    }
-                    //przypisanie wartości z ostatniego wątki
-                    for (int z = podzielone * (threadcount - 1); z < height - 1; z++)
-                    {
-                        indeks = z * width;
-                        for (int u = 1; u < width - 1; u++)
+                        //dołączenie wartości dla domyślnego obrazu
+                        else
                         {
-                            wartosci[indeks + u] = pojemnik[threadcount - 1][indeks + u];
+                            sb.AppendLine("P5");
+                            sb.AppendLine(wymiar + " " + wymiar);
+                            sb.AppendLine("255");
                         }
+                        int height = testowy.Size[0];
+                        int width = testowy.Size[1];
+                        Wartosci = testowy.Values;
+                        //wczytanie wartości uzyskanych w wersji synchronicznej
+                        for (int i = 0; i < height; i++)
+                        {
+                            for (int j = 0; j < width; j++)
+                            {
+                                sb.Append(Wartosci[i * height + j] + " ");
+                            }
+                            sb.AppendLine();
+                        }
+                        //wyświetlenie danych uzyskanych w wersji synchronicznej
+                        DisplayBoxKon.Text = sb.ToString();
+                        //wyświetlenie obrazu uzyskanego synchronicznie
+                        image_Copy.Source = BitmapToImageSource(ImagetoBitMap(testowy));
+                        textBox.Text += '\n' + "Czas zastosowania filtru splotowego w wersji synchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
+                        //wersja asynchroniczna
+                        testowy = obraz;
+                        //wyznaczenie obszarów obliczeń dla wątków
+                        int podzielone = height / threadcount;
+                        //event służący do zasygnalizowania wątkowi głównemu kiedy może zsumować wyniki obliczeń wątków
+                        CountdownEvent countdownEvent;
+                        //CountdownEvent[] CountdownEvent = new CountdownEvent[threadcount+2];
+                        Wartosci = obraz.Values;
+                        indeks = 0;
+                        float[] dummy = new float[Wartosci.Length];
+                        sw.Restart();
+                        for (int i = 0; i < iteracje; i++)
+                        {
+                            Wartosci.CopyTo(dummy, 0);
+                            countdownEvent = new CountdownEvent(threadcount + 1);
+                            for (int j = 0; j < threadcount; j++)
+                            {
+                                ThreadPool.QueueUserWorkItem(normalny, new object[] { height, width, dummy, podzielone * j, podzielone * (j + 1), j, countdownEvent });
+                            }
+                            ThreadPool.QueueUserWorkItem(boczny, new object[] { height, width, dummy, countdownEvent });
+                            //czekanie aż wszystkie wątki skończą obliczenia
+                            countdownEvent.Wait();
+                        }
+                        sw.Stop();
+                        testowy.Values = Wartosci;
+                        this.Dispatcher.Invoke(() => { PB.Value = PB.Maximum / 2; ; }, DispatcherPriority.ContextIdle);
+                        sb.Clear();
+                        wordcount = 4;
+                        indeks = 0;
+                        //wczytanie wartości uzyskanych w wersji asynchronicznej
+                        if (domyslny.IsChecked == false)
+                        {
+                            char c;
+                            while (wordcount > 0)
+                            {
+                                c = tekst[indeks];
+                                sb.Append(c);
+                                if (c.Equals('\n') || c.Equals(' ')) wordcount--;
+                                indeks++;
+                            }
+                        }
+                        else
+                        {
+                            sb.AppendLine("P5");
+                            sb.AppendLine(wymiar + " " + wymiar);
+                            sb.AppendLine("255");
+                        }
+                        for (int i = 0; i < height; i++)
+                        {
+                            for (int j = 0; j < width; j++)
+                            {
+                                sb.Append(Wartosci[i * height + j] + " ");
+                            }
+                            sb.AppendLine();
+                        }
+                        DisplayBoxKon_Copy.Text = sb.ToString();
+                        image_Copy1.Source = BitmapToImageSource(ImagetoBitMap(testowy));
+                        obraz = testowy;
+                        textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
+                        PB.Visibility = Visibility.Hidden;
+                        PB.Value = 0;
+                        BZapiszBin.IsEnabled = true;
+                        BZapiszObraz.IsEnabled = true;
+                        BZapiszTxt.IsEnabled = true;
+                        MessageBox.Show("Obliczenia w wersji synchronicznej i asynchronicznej zakończone!");
                     }
-                    for (int j = 1; j < width - 1; j++)
-                    { // ^- pierwszy wiersz pikseli obrazka
-                        wartosci[j] = pojemnik[threadcount][j];
-                    }
-                    for (int j = height * (width - 1) + 1; j < width * height - 1; j++)
-                    { // v- ostatni wiersz pikseli obrazka
-                        wartosci[j] = pojemnik[threadcount][j];
-                    }
-                    for (int j = width; j < height * (width - 1); j += width)
-                    { // <| pierwsza kolumna pikseli obrazka
-                        wartosci[j] = pojemnik[threadcount][j];
-                    }
-                    for (int j = 2 * width - 1; j < height * width - 1; j += width)
-                    { // >| ostatnia kolumna pikseli obrazka
-                        wartosci[j] = pojemnik[threadcount][j];
-                    }
-                    //piksel w lewym górnym rogu obrazka
-                    wartosci[0] = pojemnik[threadcount][0];
-                    //piksel w prawym górnym rogu
-                    wartosci[width - 1] = pojemnik[threadcount][width - 1];
-                    //piksel w lewym dolnym rogu
-                    wartosci[height * (width - 1)] = pojemnik[threadcount][height * (width - 1)];
-                    //piksel w prawym dolnym rogu
-                    wartosci[height * width - 1] = pojemnik[threadcount][height * width - 1];
-                    this.Dispatcher.Invoke(() => { PB.Value++; }, DispatcherPriority.ContextIdle);
                 }
-                testowy.Values = wartosci;
-                sw.Stop();
-                sb.Clear();
-                wordcount = 4;
-                indeks = 0;
-                //wczytanie wartości uzyskanych w wersji asynchronicznej
-                if (domyslny.IsChecked == false)
-                {
-                    char c;
-                    while (wordcount > 0)
-                    {
-                        c = tekst[indeks];
-                        sb.Append(c);
-                        if (c.Equals('\n') || c.Equals(' ')) wordcount--;
-                        indeks++;
-                    }
-                }
-                else
-                {
-                    sb.AppendLine("P5");
-                    sb.AppendLine(wymiar+" "+wymiar);
-                    sb.AppendLine("255");
-                }
-                for (int i = 0; i < height; i++)
-                {
-                    for (int j = 0; j < width; j++)
-                    {
-                        sb.Append(wartosci[i * height + j] + " ");
-                    }
-                    sb.AppendLine();
-                }
-                DisplayBoxKon_Copy.Text = sb.ToString();
-                image_Copy1.Source = BitmapToImageSource(ImagetoBitMap(testowy));
-                obraz = testowy;
-                textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
-                PB.Visibility = Visibility.Hidden;
-                PB.Value = 0;
-                BZapiszBin.IsEnabled = true;
-                BZapiszObraz.IsEnabled = true;
-                BZapiszTxt.IsEnabled = true;
-                MessageBox.Show("Obliczenia w wersji synchronicznej i asynchronicznej zakończone!");
             }
+            button1.IsEnabled = true;
         }
         //umożliwienie wczytania pliku tylko kiedy textbox z ścieżką nie jest pusty
         private void BoxPoczBin_TextChanged(object sender, TextChangedEventArgs e)
