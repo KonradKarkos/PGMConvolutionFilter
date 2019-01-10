@@ -124,23 +124,23 @@ namespace ProjektIO
                             if (wymiar > threadcount - 2 && wymiar*wymiar<Int32.MaxValue)
                             {
                                 bool udane = false;
+                                int IloscPol = 0;
                                 obraz = new MyImage(wymiar, wymiar);
                                 if(CheckSzachownica.IsChecked==true && CheckSzachownica.IsEnabled==true)
                                 {
-                                    int IloscPikseli;
-                                    if (!Int32.TryParse(BoxSzachownica.Text, out IloscPikseli))
+                                    if (!Int32.TryParse(BoxSzachownica.Text, out IloscPol))
                                     {
                                         MessageBox.Show("Błąd przy konwersji podanej liczby pól szachownicy. Spróbuj zmniejszyć liczbę pikseli.");
                                     }
                                     else
                                     {
-                                        if(IloscPikseli>wymiar)
+                                        if(IloscPol>wymiar)
                                         {
                                             MessageBox.Show("Podano zbyt dużą ilość pól danego wymiaru! Zostanie utworzony prosty obraz domyślny.");
                                         }
                                         else
                                         {
-                                            obraz.CreateCheckerboard(IloscPikseli);
+                                            obraz.CreateCheckerboard(IloscPol);
                                             udane = true;
                                         }
                                     }
@@ -164,11 +164,11 @@ namespace ProjektIO
                                 if (textBox.Text.Length > 0) textBox.Text += '\n';
                                 if (CheckSzachownica.IsChecked == true && CheckSzachownica.IsEnabled == true && udane)
                                 {
-                                    textBox.Text += "==============================================" + '\n' + "Wczytano szachownicę o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text + " i "+BoxSzachownica.Text+" polach.";
+                                    textBox.Text += "============================================" + '\n' + "Wczytano szachownicę o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text + " i "+IloscPol*IloscPol+" polach.";
                                 }
                                 else
                                 {
-                                    textBox.Text += "==============================================" + '\n' + "Wczytano obraz domyśny o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text;
+                                    textBox.Text += "============================================" + '\n' + "Wczytano obraz domyśny o wymiarach " + BoxWYmiary.Text + BlockWymiar2.Text;
                                 }
                                 MessageBox.Show("Wczytywanie zakończone.");
                             }
@@ -569,7 +569,6 @@ namespace ProjektIO
                         }
                         DisplayBoxKon_Copy.Text = sb.ToString();
                         image_Copy1.Source = BitmapToImageSource(ImagetoBitMap(testowy));
-                        obraz = testowy;
                         textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
                         PB.Visibility = Visibility.Hidden;
                         PB.Value = 0;
@@ -761,6 +760,12 @@ namespace ProjektIO
         {
             if(BlockWymiar2!=null)
             BlockWymiar2.Text = 'x' + BoxWYmiary.Text;
+        }
+
+        private void BoxSzachownica_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (BlockSzachownica != null)
+                BlockSzachownica.Text = 'x' + BoxSzachownica.Text;
         }
     }
 }

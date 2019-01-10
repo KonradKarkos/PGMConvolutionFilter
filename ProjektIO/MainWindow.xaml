@@ -17,7 +17,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="388" IsReadOnly="True"/>
+                    <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="388" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Wyniki działania programu:" VerticalAlignment="Top"/>
                     <Button x:Name="button" Content="Pomoc" HorizontalAlignment="Left" Margin="703,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
                     <Button x:Name="button1" Content="Start" HorizontalAlignment="Left" Margin="703,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="Button1_Click"/>
@@ -40,12 +40,13 @@
                     <TextBox x:Name="BoxWYmiary" HorizontalAlignment="Left" Height="17" Margin="606,362,0,0" TextWrapping="Wrap" Text="1024" VerticalAlignment="Top" Width="39" PreviewTextInput="Sprawdz_liczby" TextChanged="BoxWYmiary_TextChanged"/>
                     <TextBlock x:Name="BlockWymiar2" HorizontalAlignment="Left" Margin="650,362,0,0" TextWrapping="Wrap" Text="x1024" VerticalAlignment="Top" Width="38"/>
                     <CheckBox x:Name="CheckSzachownica" Content="Zamień go na szachownicę o podanej liczbie pól:" HorizontalAlignment="Left" Margin="403,342,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <TextBox x:Name="BoxSzachownica" HorizontalAlignment="Left" Height="17" Margin="686,340,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="33" IsEnabled="False" PreviewTextInput="Sprawdz_liczby"/>
+                    <TextBox x:Name="BoxSzachownica" HorizontalAlignment="Left" Height="17" Margin="686,340,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="33" IsEnabled="False" PreviewTextInput="Sprawdz_liczby" TextChanged="BoxSzachownica_TextChanged"/>
+                    <TextBlock x:Name="BlockSzachownica" HorizontalAlignment="Left" Margin="724,341,0,0" TextWrapping="Wrap" Text="x8" VerticalAlignment="Top" Width="38"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Tekstowe">
                 <Grid Background="#FFE5E5E5">
-                    <TextBox x:Name="DisplayBoxPocz" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
+                    <TextBox x:Name="DisplayBoxPocz" HorizontalAlignment="Left" Height="356" Margin="10,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
                     <TextBox x:Name="DisplayBoxKon" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
                     <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Obraz początkowy w formacie PGM:" VerticalAlignment="Top"/>
                     <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Obraz końcowy:" VerticalAlignment="Top"/>
