@@ -333,6 +333,7 @@ namespace ProjektIO
             }
             return result;
         }
+        //==========================================================================
         //funkcja z której korzystają wątki aplikujące filtr we wnętrzu obrazu
         private void normalny(object dane)
         {
@@ -436,7 +437,38 @@ namespace ProjektIO
                     values[height * width - 1 - width] * 0.1f;
             c.Signal();
         }
-
+        //==========================================================================
+        private void nowy(object dane)
+        {
+            int height = (int)((object[])dane)[0];
+            int width = (int)((object[])dane)[1];
+            float[] values = (float[])((object[])dane)[2];
+            int poczatek = (int)((object[])dane)[3];
+            int koniec = (int)((object[])dane)[4];
+            int numer = (int)((object[])dane)[5];
+            CountdownEvent c = (CountdownEvent)((object[])dane)[6];
+            int iteracje = (int)((object[])dane)[7];
+            int index;
+            for (int z = 0; z < iteracje; z++)
+            {
+                poczatek++;
+                koniec--;
+                for (int i = poczatek; i < koniec; i++)
+                {
+                    for (int j = 1; j < width - 1; j++)
+                    {
+                        index = i * width + j;
+                        Wartosci[index] =
+                            values[index] * 0.6f +
+                            values[index + 1] * 0.1f +
+                            values[index - 1] * 0.1f +
+                            values[index + width] * 0.1f +
+                            values[index - width] * 0.1f;
+                    }
+                }
+            }
+            c.Signal();
+        }
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
             button1.IsEnabled = false;
