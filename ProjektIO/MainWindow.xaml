@@ -31,7 +31,7 @@
                     <Button x:Name="BZapiszTxt" Content="Zapisz jako txt" HorizontalAlignment="Left" Margin="403,201,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszTxt_Click" IsEnabled="False"/>
                     <TextBox x:Name="BoxTxtKon" HorizontalAlignment="Left" Height="19" Margin="403,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
                     <CheckBox x:Name="domyslny" Content="Użyj domyślnego pustego obrazu" HorizontalAlignment="Left" Margin="403,362,0,0" VerticalAlignment="Top" Checked="Domyslny_Checked" Unchecked="Domyslny_Unchecked"/>
-                    <ProgressBar x:Name="PB" HorizontalAlignment="Left" Height="29" Margin="403,71,0,0" VerticalAlignment="Top" Width="375" Maximum="400" Visibility="Hidden" Value="0" Minimum="0"/>
+                    <ProgressBar x:Name="PB" HorizontalAlignment="Left" Height="29" Margin="403,71,0,0" VerticalAlignment="Top" Width="375" Maximum="2" Visibility="Hidden" Value="0" Minimum="0"/>
                     <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="403,321,0,0" TextWrapping="Wrap" Text="Ilość iteracji:" VerticalAlignment="Top"/>
                     <TextBox x:Name="BoxIteracje" HorizontalAlignment="Left" Height="16" Margin="473,321,0,0" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
                     <TextBlock x:Name="textBlock4" HorizontalAlignment="Left" Margin="598,321,0,0" TextWrapping="Wrap" Text="Ilość wątków:" VerticalAlignment="Top"/>
@@ -65,6 +65,21 @@
                     <TextBlock x:Name="textBlock1_Copy" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Obraz końcowy:" VerticalAlignment="Top"/>
                     <Button x:Name="BSwitchImg" Content="Synchroniczny" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="BSwitchImg_Click"/>
                     <Image x:Name="image_Copy1" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Hidden"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Wybór metody asynchronicznej">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton x:Name="RadioNormalne" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody"/>
+                    <RadioButton x:Name="RadioBezDopelnienia" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody"/>
+                    <RadioButton x:Name="RadioZDopelnieniem" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="19" Height="16"/>
+                    <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Podział na wątki oczekujące na siebie nazwzajem z przekazywaniem tylko liczonego fragmentu" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="textBlock6" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń jeśli nie wychodzi poza zakres" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="textBlock7" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń dopełniony zerami jeśli wychodzi poza zakres (brak czarnej ramki na górze i dole obrazu)" VerticalAlignment="Top" Width="709"/>
+                    <TextBox x:Name="BoxPowtorzenia" HorizontalAlignment="Left" Height="16" Margin="346,366,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
+                    <TextBlock x:Name="textBlock8" HorizontalAlignment="Left" Margin="10,366,0,0" TextWrapping="Wrap" Text="Liczba powtórzeń obliczeń dla uśrednienia wyniku czasowego: " VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>

@@ -20,7 +20,7 @@ namespace ProjektIO
         private MyImage obraz;
         int wymiar;
         //kontener na wyniki funkcji procesów
-        float[] Wartosci;
+        float[][] Wartosci;
         public MainWindow()
         {
             InitializeComponent();
@@ -152,7 +152,7 @@ namespace ProjektIO
                                 {
                                     for (int j = 0; j < wymiar; j++)
                                     {
-                                        sb.Append(obraz.Values[i * wymiar + j] + " ");
+                                        sb.Append(obraz.Values[i][j] + " ");
                                     }
                                     sb.AppendLine();
                                 }
@@ -219,9 +219,8 @@ namespace ProjektIO
                                     else
                                     {
                                         obraz = new MyImage(width, height);
-                                        float[] wartosci = new float[width * height];
+                                        float[][] wartosci = new float[height][];
                                         byte b = 0;
-                                        int indeks = 0;
                                         //wczytanie pliku jeśli jego wersja to P2 (zapisana w ASCII)
                                         if (wersja.Equals("P2"))
                                         {
@@ -237,11 +236,11 @@ namespace ProjektIO
                                             //wczytanie po kolei wszystkich wartości pikseli
                                             for (int i = 0; i < height; i++)
                                             {
+                                                wartosci[i] = new float[width];
                                                 for (int j = 0; j < width; j++)
                                                 {
-                                                    indeks = i * height + j;
                                                     wersja = liczba(sr);
-                                                    wartosci[indeks] = float.Parse(wersja);
+                                                    wartosci[i][j] = float.Parse(wersja);
                                                     sb.Append(wersja + " ");
                                                 }
                                                 sb.AppendLine();
@@ -252,11 +251,11 @@ namespace ProjektIO
                                         {
                                             for (int i = 0; i < height; i++)
                                             {
+                                                wartosci[i] = new float[width];
                                                 for (int j = 0; j < width; j++)
                                                 {
-                                                    indeks = i * height + j;
                                                     b = br.ReadByte();
-                                                    wartosci[indeks] = b;
+                                                    wartosci[i][j] = b;
                                                     sb.Append(b + " ");
                                                 }
                                                 sb.AppendLine();
@@ -265,7 +264,7 @@ namespace ProjektIO
                                         //wyświetlenie wczytanego pliku w odpowiednim textbox'ie
                                         DisplayBoxPocz.Text = sb.ToString();
                                         //przypisanie wczytanych wartości do obiektu przechowującego informacje o pliku pgm
-                                        obraz.Values = (float[])wartosci;
+                                        obraz.Values = wartosci;
                                         Bitmap poczatkowy = new Bitmap(width, height);
                                         Color c = new Color();
                                         int wartosc;
@@ -274,7 +273,7 @@ namespace ProjektIO
                                         {
                                             for (int j = 0; j < width; j++)
                                             {
-                                                wartosc = (int)wartosci[i * height + j];
+                                                wartosc = (int)wartosci[i][j];
                                                 //ustawienie koloru piksela na odpowiedni odcień szarości
                                                 c = Color.FromArgb(wartosc, wartosc, wartosc);
                                                 poczatkowy.SetPixel(j, i, c);
@@ -316,17 +315,17 @@ namespace ProjektIO
         //metoda konwertująca imagesource do bitmapy
         private Bitmap ImagetoBitMap(MyImage mapa)
         {
-            int height = mapa.Size[0];
-            int width = mapa.Size[1];
+            int height = mapa.Height;
+            int width = mapa.Width;
             Bitmap result = new Bitmap(width, height);
             Color c = new Color();
             int wartosc;
-            float[] wartosci = mapa.Values;
+            float[][] wartosci = mapa.Values;
             for(int i=0;i<height;i++)
             {
                 for(int j=0;j<width;j++)
                 {
-                    wartosc = (int)wartosci[i * height + j];
+                    wartosc = (int)wartosci[i][j];
                     c = Color.FromArgb(wartosc, wartosc, wartosc);
                     result.SetPixel(j, i, c);
                 }
@@ -339,29 +338,40 @@ namespace ProjektIO
         {
             int height = (int)((object[])dane)[0];
             int width = (int)((object[])dane)[1];
-            float[] values = (float[])((object[])dane)[2];
+            float[][] values = (float[][])((object[])dane)[2];
             int poczatek = (int)((object[])dane)[3];
             int koniec = (int)((object[])dane)[4];
             int numer = (int)((object[])dane)[5];
             CountdownEvent c = (CountdownEvent)((object[])dane)[6];
-            //CountdownEvent c2 = (CountdownEvent)((object[])dane)[7];
-            //float[] nowe = new float[values.Length];
-            int index;
+            CountdownEvent[] c2 = (CountdownEvent[])((object[])dane)[7];
+            int iteracje = (int)((object[])dane)[8];
             //pominięcie pierwszego wiersza pikseli aby nie wychodzić poza zakres
             if (poczatek == 0) poczatek++;
             //przesunięcie granicy nakładania filtru dla ostatniego wątku jeśli wysokość obrazu nie była wielokrotnością liczby wątków
             if (numer == threadcount-1) koniec = height-1;
-            for (int i = poczatek; i < koniec; i++)
+            for (int z = 0; z < iteracje * 2; z += 2)
             {
-                for (int j = 1; j < width - 1; j++)
+                for (int i = poczatek; i < koniec; i++)
                 {
-                    index = i * width + j;
-                    Wartosci[index] =
-                        values[index] * 0.6f +
-                        values[index + 1] * 0.1f +
-                        values[index - 1] * 0.1f +
-                        values[index + width] * 0.1f +
-                        values[index - width] * 0.1f;
+                    for (int j = 1; j < width - 1; j++)
+                    {
+                        Wartosci[i][j] =
+                            values[i][j] * 0.6f +
+                            values[i][j + 1] * 0.1f +
+                            values[i][j - 1] * 0.1f +
+                            values[i - 1][j] * 0.1f +
+                            values[i + 1][j] * 0.1f;
+                    }
+                }
+                c2[z].Signal();
+                if (poczatek == 1)
+                {
+                    c2[z].Wait();
+
+                }
+                else
+                {
+                    c2[z + 1].Wait();
                 }
             }
             c.Signal();
@@ -371,70 +381,71 @@ namespace ProjektIO
         {
             int height = (int)((object[])dane)[0];
             int width = (int)((object[])dane)[1];
-            float[] values = (float[])((object[])dane)[2];
+            float[][] values = (float[][])((object[])dane)[2];
             CountdownEvent c = (CountdownEvent)((object[])dane)[3];
-            //CountdownEvent c2 = (CountdownEvent)((object[])dane)[4];
-            //float[] nowe = new float[values.Length];
-            for (int i = 1; i < width - 1; i++)
-            { // ^- pierwszy wiersz pikseli obrazka
-                Wartosci[i] =
-                    values[i] * 0.6f +
-                    values[i + 1] * 0.1f +
-                    values[i - 1] * 0.1f +
-                    values[i + width] * 0.1f;
+            CountdownEvent[] c2 = (CountdownEvent[])((object[])dane)[4];
+            int iteracje = (int)((object[])dane)[5];
+            for (int z = 0; z < iteracje*2; z+=2)
+            {
+                for (int i = 1; i < width - 1; i++)
+                { // ^- pierwszy wiersz pikseli obrazka
+                    Wartosci[0][i] =
+                        values[0][i] * 0.6f +
+                        values[0][i + 1] * 0.1f +
+                        values[0][i - 1] * 0.1f +
+                        values[1][i] * 0.1f;
+                    // v- ostatni wiersz pikseli obrazka
+                    Wartosci[height - 1][i] =
+                        values[height - 1][i] * 0.6f +
+                         values[height - 1][i + 1] * 0.1f +
+                         values[height - 1][i - 1] * 0.1f +
+                         values[height - 2][i] * 0.1f;
+                }
+                for (int i = 1; i < height - 1; i++)
+                { // <| pierwsza kolumna pikseli obrazka
+                    Wartosci[i][0] =
+                        values[i][0] * 0.6f +
+                        values[i][1] * 0.1f +
+                        values[i + 1][0] * 0.1f +
+                        values[i - 1][0] * 0.1f;
+                    // >| ostatnia kolumna pikseli obrazka
+                    Wartosci[i][width - 1] =
+                        values[i][width - 1] * 0.6f +
+                        values[i][width - 2] * 0.1f +
+                        values[i + 1][width - 1] * 0.1f +
+                        values[i - 1][width - 1] * 0.1f;
+                }
+                //piksel w lewym górnym rogu obrazka
+                Wartosci[0][0] =
+                        values[0][0] * 0.6f +
+                        //piksel na prawo
+                        values[0][1] * 0.1f +
+                        //piksel pod nim
+                        values[1][0] * 0.1f;
+                //piksel w prawym górnym rogu
+                Wartosci[0][width - 1] =
+                        values[0][width - 1] * 0.6f +
+                        //piksel na lewo
+                        values[0][width - 2] * 0.1f +
+                        //piksel pod nim
+                        values[1][width - 1] * 0.1f;
+                //piksel w lewym dolnym rogu
+                Wartosci[height - 1][0] =
+                        values[height - 1][0] * 0.6f +
+                        //piksel nad nim
+                        values[height - 2][0] * 0.1f +
+                        //piksel na prawo
+                        values[height - 1][1] * 0.1f;
+                //piksel w prawym dolnym rogu
+                Wartosci[height - 1][width - 1] =
+                        values[height - 1][width - 1] * 0.6f +
+                        //piksel na lewo
+                        values[height - 1][width - 2] * 0.1f +
+                        //piksel nad nim
+                        values[height - 2][width - 1] * 0.1f;
+                c2[z].Signal();
+                c2[z + 1].Wait();
             }
-            for (int i = height * (width - 1) + 1; i < width * height - 1; i++)
-            { // v- ostatni wiersz pikseli obrazka
-                Wartosci[i] =
-                    values[i] * 0.6f +
-                    values[i + 1] * 0.1f +
-                    values[i - 1] * 0.1f +
-                    values[i - width] * 0.1f;
-            }
-            for (int i = width; i < height * (width - 1); i += width)
-            { // <| pierwsza kolumna pikseli obrazka
-                Wartosci[i] =
-                    values[i] * 0.6f +
-                    values[i + 1] * 0.1f +
-                    values[i + width] * 0.1f +
-                    values[i - width] * 0.1f;
-            }
-            for (int i = 2 * width - 1; i < height * width - 1; i += width)
-            { // >| ostatnia kolumna pikseli obrazka
-                Wartosci[i] =
-                    values[i] * 0.6f +
-                    values[i - 1] * 0.1f +
-                    values[i + width] * 0.1f +
-                    values[i - width] * 0.1f;
-            }
-            //piksel w lewym górnym rogu obrazka
-            Wartosci[0] =
-                    values[0] * 0.6f +
-                    //piksel na prawo
-                    values[0 + 1] * 0.1f +
-                    //piksel pod nim
-                    values[0 + width] * 0.1f;
-            //piksel w prawym górnym rogu
-            Wartosci[width - 1] =
-                    values[width - 1] * 0.6f +
-                    //piksel na lewo
-                    values[width - 1 - 1] * 0.1f +
-                    //piksel pod nim
-                    values[width - 1 + width] * 0.1f;
-            //piksel w lewym dolnym rogu
-            Wartosci[height * (width - 1)] =
-                    values[height * (width - 1)] * 0.6f +
-                    //piksel nad nim
-                    values[height * (width - 1) - width] * 0.1f +
-                    //piksel na prawo
-                    values[height * (width - 1) + 1] * 0.1f;
-            //piksel w prawym dolnym rogu
-            Wartosci[height * width - 1] =
-                    values[height * width - 1] * 0.6f +
-                    //piksel na lewo
-                    values[height * width - 1 - 1] * 0.1f +
-                    //piksel nad nim
-                    values[height * width - 1 - width] * 0.1f;
             c.Signal();
         }
         //==========================================================================
@@ -442,13 +453,17 @@ namespace ProjektIO
         {
             int height = (int)((object[])dane)[0];
             int width = (int)((object[])dane)[1];
-            float[] values = (float[])((object[])dane)[2];
-            int poczatek = (int)((object[])dane)[3];
-            int koniec = (int)((object[])dane)[4];
-            int numer = (int)((object[])dane)[5];
-            CountdownEvent c = (CountdownEvent)((object[])dane)[6];
-            int iteracje = (int)((object[])dane)[7];
-            int index;
+            float[][] values = (float[][])((object[])dane)[2];
+            int poczatek = 0;
+            int koniec = values.Length;
+            int numer = (int)((object[])dane)[3];
+            CountdownEvent c = (CountdownEvent)((object[])dane)[4];
+            int iteracje = (int)((object[])dane)[5];
+            float[][] nowe = new float[values.Length][];
+            for(int i=0; i<values.Length;i++)
+            {
+                nowe[i] = new float[values[0].Length];
+            }
             for (int z = 0; z < iteracje; z++)
             {
                 poczatek++;
@@ -457,157 +472,497 @@ namespace ProjektIO
                 {
                     for (int j = 1; j < width - 1; j++)
                     {
-                        index = i * width + j;
-                        Wartosci[index] =
-                            values[index] * 0.6f +
-                            values[index + 1] * 0.1f +
-                            values[index - 1] * 0.1f +
-                            values[index + width] * 0.1f +
-                            values[index - width] * 0.1f;
+                        nowe[i][j] =
+                            values[i][j] * 0.6f +
+                            values[i][j+1] * 0.1f +
+                            values[i][j-1] * 0.1f +
+                            values[i+1][j] * 0.1f +
+                            values[i-1][j] * 0.1f;
                     }
                 }
+                for (int i = poczatek; i < koniec; i++)
+                { // <| pierwsza kolumna pikseli obrazka
+                    nowe[i][0] =
+                        values[i][0] * 0.6f +
+                        values[i][1] * 0.1f +
+                        values[i + 1][0] * 0.1f +
+                        values[i - 1][0] * 0.1f;
+                    // >| ostatnia kolumna pikseli obrazka
+                    nowe[i][width-1] =
+                        values[i][width - 1] * 0.6f +
+                        values[i][width - 2] * 0.1f +
+                        values[i + 1][width - 1] * 0.1f +
+                        values[i - 1][width - 1] * 0.1f;
+                }
+                for (int i = 0; i < nowe.Length; i++)
+                {
+                    nowe[i].CopyTo(values[i], 0);
+                }
+            }
+            for(int i=poczatek;i<koniec;i++)
+            {
+                nowe[i].CopyTo(Wartosci[numer], 0);
+                numer++;
             }
             c.Signal();
         }
+
+        private void nowy_czesci(object dane)
+        {
+            int height = (int)((object[])dane)[0];
+            int width = (int)((object[])dane)[1];
+            float[][] values = (float[][])((object[])dane)[2];
+            int poczatek = 1;
+            int koniec = values.Length;
+            int poczatkowy = (int)((object[])dane)[3];
+            int numer = (int)((object[])dane)[4];
+            CountdownEvent c = (CountdownEvent)((object[])dane)[5];
+            int iteracje = (int)((object[])dane)[6];
+            float[][] nowe = new float[values.Length][];
+            height = height + poczatkowy;
+            for (int i = 0; i < values.Length; i++)
+            {
+                nowe[i] = new float[values[0].Length];
+            }
+            //przetwarzanie do momentu kiedy ilość iteracji będzie zgodna z ilością nadmiarowych wierszy pikseli z obu stron
+            while (iteracje > 0)
+            {
+                for (int i = poczatek; i < koniec-1; i++)
+                {
+                    for (int j = 1; j < width - 1; j++)
+                    {
+                        nowe[i][j] =
+                            values[i][j] * 0.6f +
+                            values[i][j + 1] * 0.1f +
+                            values[i][j - 1] * 0.1f +
+                            values[i + 1][j] * 0.1f +
+                            values[i - 1][j] * 0.1f;
+                    }
+                }
+                //sprawdzenie czy wiersz pierwszy jest wierszem skrajnym poza który wychodzą iteracje
+                if (poczatkowy - iteracje <= 0)
+                {
+                    for (int i = 1; i < width - 1; i++)
+                    { // ^- pierwszy wiersz pikseli obrazka
+                        nowe[0][i] =
+                            values[0][i] * 0.6f +
+                            values[0][i + 1] * 0.1f +
+                            values[0][i - 1] * 0.1f +
+                            values[1][i] * 0.1f;
+                    }
+                    //piksel w lewym górnym rogu obrazka
+                    nowe[0][0] =
+                            values[0][0] * 0.6f +
+                            //piksel na prawo
+                            values[0][1] * 0.1f +
+                            //piksel pod nim
+                            values[1][0] * 0.1f;
+                    //piksel w prawym górnym rogu
+                    nowe[0][width - 1] =
+                            values[0][width - 1] * 0.6f +
+                            //piksel na lewo
+                            values[0][width - 2] * 0.1f +
+                            //piksel pod nim
+                            values[1][width - 1] * 0.1f;
+                }
+                else
+                {
+                    poczatek++;
+                }
+                //sprawdzenie czy wiersz ostatni jest wierszem skrajnym poza którego wychodzą iteracje
+                for (int i = poczatek+1; i < koniec-1; i++)
+                { // <| pierwsza kolumna pikseli obrazka
+                    nowe[i][0] =
+                        values[i][0] * 0.6f +
+                        values[i][1] * 0.1f +
+                        values[i + 1][0] * 0.1f +
+                        values[i - 1][0] * 0.1f;
+                    // >| ostatnia kolumna pikseli obrazka
+                    nowe[i][width - 1] =
+                        values[i][width - 1] * 0.6f +
+                        values[i][width - 2] * 0.1f +
+                        values[i + 1][width - 1] * 0.1f +
+                        values[i - 1][width - 1] * 0.1f;
+                }
+                if (koniec - iteracje <= height)
+                {
+                    for (int i = 1; i < width - 1; i++)
+                    {
+                        // v- ostatni wiersz pikseli obrazka
+                        nowe[koniec - 1][i] =
+                            values[koniec - 1][i] * 0.6f +
+                             values[koniec - 1][i + 1] * 0.1f +
+                             values[koniec - 1][i - 1] * 0.1f +
+                             values[koniec - 2][i] * 0.1f;
+                    }
+                    //piksel w lewym dolnym rogu
+                    nowe[koniec - 1][0] =
+                            values[koniec - 1][0] * 0.6f +
+                            //piksel nad nim
+                            values[koniec - 2][0] * 0.1f +
+                            //piksel na prawo
+                            values[koniec - 1][1] * 0.1f;
+                    //piksel w prawym dolnym rogu
+                    nowe[koniec - 1][width - 1] =
+                            values[koniec - 1][width - 1] * 0.6f +
+                            //piksel na lewo
+                            values[koniec - 1][width - 2] * 0.1f +
+                            //piksel nad nim
+                            values[koniec - 2][width - 1] * 0.1f;
+                }
+                else
+                {
+                    koniec--;
+                }
+                nowe.CopyTo(values, 0);
+                iteracje--;
+            }
+            for (int i = poczatek; i < koniec; i++)
+            {
+                nowe[i].CopyTo(Wartosci[numer], 0);
+                numer++;
+            }
+            c.Signal();
+        }
+        //funkcja dzieląca Wartości pomiędzy wątki
+        private float[][][] UtworzMaterialDlaWatkow(int podzielone, int iteracje,int width,bool DopelnijZerami, int[] poczatkowe)
+        {
+            int IloscPikseliDlaKazdegoWatku = podzielone + iteracje * 2;
+            int indeks = 0;
+            float[][][] dummy2 = new float[threadcount][][];
+            for (int i = 0; i < threadcount; i++)
+            {
+                if (i == threadcount - 1)
+                {
+                    IloscPikseliDlaKazdegoWatku = (Wartosci.Length - i * podzielone) + iteracje * 2;
+                }
+                dummy2[i] = new float[IloscPikseliDlaKazdegoWatku][];
+                for (int j = 0; j < IloscPikseliDlaKazdegoWatku; j++)
+                {
+                    dummy2[i][j] = new float[width];
+                }
+            }
+            IloscPikseliDlaKazdegoWatku = podzielone + iteracje * 2;
+            int przyznane;
+            for (int i = 0; i < threadcount; i++)
+            {
+                przyznane = i * podzielone;
+                if (i == threadcount - 1)
+                {
+                    IloscPikseliDlaKazdegoWatku = (Wartosci.Length - i * podzielone) + iteracje * 2;
+                }
+                //sprawdzenie czy można do wątku przekazać daną ilość pikseli nie wykraczają poza zakres tablicy
+                if (przyznane - iteracje >= 0 && IloscPikseliDlaKazdegoWatku + przyznane - iteracje < Wartosci.Length)
+                {
+                    indeks = przyznane - iteracje;
+                    poczatkowe[i] = iteracje;
+                    for (int j = 0; j < IloscPikseliDlaKazdegoWatku; j++)
+                    {
+                        Wartosci[indeks].CopyTo(dummy2[i][j], 0);
+                        indeks++;
+                    }
+                }
+                else
+                {
+                    //przypadek, w którym nie jesteśmy w stanie przekazać do wątku odpowiedniej ilości pikseli od początku dla danej ilości iteracji
+                    if (przyznane - iteracje < 0 && przyznane - iteracje + IloscPikseliDlaKazdegoWatku < Wartosci.Length)
+                    {
+                        indeks = 0;
+                        if(DopelnijZerami)
+                        for (int d = 0; d < (iteracje - przyznane); d++)
+                        {
+                            for (int m = 0; m < width; m++)
+                            {
+                                dummy2[i][d][m] = 0;
+                            }
+                        }
+                        poczatkowe[i] = (iteracje - przyznane);
+                        for (int j = (iteracje - przyznane); j < IloscPikseliDlaKazdegoWatku; j++)
+                        {
+                            Wartosci[indeks].CopyTo(dummy2[i][j], 0);
+                            indeks++;
+                        }
+                    }
+                    else
+                    {
+                        //przypadek, w którym nie jesteśmy w stanie przekazać do wątku odpowiedniej ilości pikseli od końca dla danej ilości iteracji
+                        if (przyznane - iteracje >= 0 && przyznane - iteracje + IloscPikseliDlaKazdegoWatku > Wartosci.Length)
+                        {
+                            indeks = (przyznane - iteracje);
+                            for (int j = 0; j < Wartosci.Length - (i * podzielone - iteracje); j++)
+                            {
+                                Wartosci[indeks].CopyTo(dummy2[i][j], 0);
+                                indeks++;
+                            }
+                            if(DopelnijZerami)
+                            for (int y = Wartosci.Length - (przyznane - iteracje); y < IloscPikseliDlaKazdegoWatku; y++)
+                            {
+                                for (int m = 0; m < width; m++)
+                                {
+                                    dummy2[i][y][m] = 0;
+                                }
+                            }
+                        }
+                        //przypadek, w którym nie jesteśmy w stanie przekazać do wątku odpowiedniej ilości pikseli od początku i końca obrazu dla danej ilości iteracji
+                        else
+                        {
+                            indeks = 0;
+                            if(DopelnijZerami)
+                            for (int d = 0; d < (iteracje - przyznane); d++)
+                            {
+                                for (int m = 0; m < width; m++)
+                                {
+                                    dummy2[i][d][m] = 0;
+                                }
+                            }
+                            for (int j = (iteracje - przyznane); j < Wartosci.Length - (przyznane - iteracje); j++)
+                            {
+                                Wartosci[indeks].CopyTo(dummy2[i][j], 0);
+                                indeks++;
+                            }
+                            if(DopelnijZerami)
+                            for (int y = Wartosci.Length - (przyznane - iteracje); y < IloscPikseliDlaKazdegoWatku; y++)
+                            {
+                                for (int m = 0; m < width; m++)
+                                {
+                                    dummy2[i][y][m] = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return dummy2;
+        }
+
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
             button1.IsEnabled = false;
             int iteracje;
-            if (!Int32.TryParse(BoxWatki.Text, out threadcount))
+            int powtorzenia;
+            if (!Int32.TryParse(BoxPowtorzenia.Text, out powtorzenia))
             {
-                MessageBox.Show("Nieudana konwersja typu przy konwersji ilości wątków.");
+                MessageBox.Show("Nieudana konwersja ilości powtórzeń obliczeń dla uśrednienia wyniku czasowgo!");
             }
             else
             {
-                if (threadcount > 1000 || obraz.Size[0] < threadcount - 2)
+                if (!Int32.TryParse(BoxWatki.Text, out threadcount))
                 {
-                    MessageBox.Show("Podano zbyt dużą ilość wątków!");
+                    MessageBox.Show("Nieudana konwersja typu przy konwersji ilości wątków.");
                 }
                 else
                 {
-                    if (!Int32.TryParse(BoxIteracje.Text, out iteracje))
+                    if (threadcount > 1000 || obraz.Height < threadcount - 2)
                     {
-                        MessageBox.Show("Nieudana konwersja ilości iteracji, spróbuj zmniejszyć ilość potencjalnych iteracji.");
+                        MessageBox.Show("Podano zbyt dużą ilość wątków!");
                     }
                     else
                     {
-                        textBox.Text += '\n' + "Ustawiona ilość iteracji: " + iteracje + '\n' + "Ustawiona ilość wątków: " + threadcount;
-                        PB.Maximum = iteracje * 2;
-                        PB.Visibility = Visibility.Visible;
-                        MyImage testowy = obraz;
-                        Stopwatch sw = new Stopwatch();
-                        sw.Start();
-                        //synchroniczne nałożenie filtru
-                        for (int i = 0; i < iteracje; i++)
+                        if (!Int32.TryParse(BoxIteracje.Text, out iteracje))
                         {
-                            testowy = testowy.convolution();
-                        }
-                        sw.Stop();
-                        this.Dispatcher.Invoke(() => { PB.Value = PB.Maximum / 2; ; }, DispatcherPriority.ContextIdle);
-                        StringBuilder sb = new StringBuilder();
-                        int wordcount = 4;
-                        int indeks = 0;
-                        String tekst = DisplayBoxPocz.Text;
-                        //wczytanie czterech wartości: wersji, szerokości, wysokości i maksymalnej wartości piksela jeśli nie jest to obraz domyślny
-                        if (domyslny.IsChecked == false)
-                        {
-                            char c;
-                            while (wordcount > 0)
-                            {
-                                c = tekst[indeks];
-                                sb.Append(c);
-                                if (c.Equals('\n') || c.Equals(' ')) wordcount--;
-                                indeks++;
-                            }
-                        }
-                        //dołączenie wartości dla domyślnego obrazu
-                        else
-                        {
-                            sb.AppendLine("P5");
-                            sb.AppendLine(wymiar + " " + wymiar);
-                            sb.AppendLine("255");
-                        }
-                        int height = testowy.Size[0];
-                        int width = testowy.Size[1];
-                        Wartosci = testowy.Values;
-                        //wczytanie wartości uzyskanych w wersji synchronicznej
-                        for (int i = 0; i < height; i++)
-                        {
-                            for (int j = 0; j < width; j++)
-                            {
-                                sb.Append(Wartosci[i * height + j] + " ");
-                            }
-                            sb.AppendLine();
-                        }
-                        //wyświetlenie danych uzyskanych w wersji synchronicznej
-                        DisplayBoxKon.Text = sb.ToString();
-                        //wyświetlenie obrazu uzyskanego synchronicznie
-                        image_Copy.Source = BitmapToImageSource(ImagetoBitMap(testowy));
-                        textBox.Text += '\n' + "Czas zastosowania filtru splotowego w wersji synchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
-                        //wersja asynchroniczna
-                        testowy = obraz;
-                        //wyznaczenie obszarów obliczeń dla wątków
-                        int podzielone = height / threadcount;
-                        //event służący do zasygnalizowania wątkowi głównemu kiedy może zsumować wyniki obliczeń wątków
-                        CountdownEvent countdownEvent;
-                        //CountdownEvent[] CountdownEvent = new CountdownEvent[threadcount+2];
-                        Wartosci = obraz.Values;
-                        indeks = 0;
-                        float[] dummy = new float[Wartosci.Length];
-                        sw.Restart();
-                        for (int i = 0; i < iteracje; i++)
-                        {
-                            Wartosci.CopyTo(dummy, 0);
-                            countdownEvent = new CountdownEvent(threadcount + 1);
-                            for (int j = 0; j < threadcount; j++)
-                            {
-                                ThreadPool.QueueUserWorkItem(normalny, new object[] { height, width, dummy, podzielone * j, podzielone * (j + 1), j, countdownEvent });
-                            }
-                            ThreadPool.QueueUserWorkItem(boczny, new object[] { height, width, dummy, countdownEvent });
-                            //czekanie aż wszystkie wątki skończą obliczenia
-                            countdownEvent.Wait();
-                        }
-                        sw.Stop();
-                        testowy.Values = Wartosci;
-                        this.Dispatcher.Invoke(() => { PB.Value = PB.Maximum / 2; ; }, DispatcherPriority.ContextIdle);
-                        sb.Clear();
-                        wordcount = 4;
-                        indeks = 0;
-                        //wczytanie wartości uzyskanych w wersji asynchronicznej
-                        if (domyslny.IsChecked == false)
-                        {
-                            char c;
-                            while (wordcount > 0)
-                            {
-                                c = tekst[indeks];
-                                sb.Append(c);
-                                if (c.Equals('\n') || c.Equals(' ')) wordcount--;
-                                indeks++;
-                            }
+                            MessageBox.Show("Nieudana konwersja ilości iteracji, spróbuj zmniejszyć ilość potencjalnych iteracji.");
                         }
                         else
                         {
-                            sb.AppendLine("P5");
-                            sb.AppendLine(wymiar + " " + wymiar);
-                            sb.AppendLine("255");
-                        }
-                        for (int i = 0; i < height; i++)
-                        {
-                            for (int j = 0; j < width; j++)
+                            double suma = 0.0;
+                            textBox.Text += '\n' + "Ustawiona ilość iteracji: " + iteracje + '\n' + "Ustawiona ilość wątków: " + threadcount;
+                            PB.Visibility = Visibility.Visible;
+                            MyImage testowy = obraz;
+                            Stopwatch sw = new Stopwatch();
+                            for (int z = 0; z < powtorzenia; z++)
                             {
-                                sb.Append(Wartosci[i * height + j] + " ");
+                                testowy = obraz;
+                                sw.Restart();
+                                //synchroniczne nałożenie filtru
+                                for (int i = 0; i < iteracje; i++)
+                                {
+                                    testowy = testowy.convolution();
+                                }
+                                sw.Stop();
+                                suma += sw.ElapsedMilliseconds;
                             }
-                            sb.AppendLine();
+                            this.Dispatcher.Invoke(() => { PB.Value++; ; }, DispatcherPriority.ContextIdle);
+                            StringBuilder sb = new StringBuilder();
+                            int wordcount = 4;
+                            int indeks = 0;
+                            String tekst = DisplayBoxPocz.Text;
+                            //wczytanie czterech wartości: wersji, szerokości, wysokości i maksymalnej wartości piksela jeśli nie jest to obraz domyślny
+                            if (domyslny.IsChecked == false)
+                            {
+                                char c;
+                                while (wordcount > 0)
+                                {
+                                    c = tekst[indeks];
+                                    sb.Append(c);
+                                    if (c.Equals('\n') || c.Equals(' ')) wordcount--;
+                                    indeks++;
+                                }
+                            }
+                            //dołączenie wartości dla domyślnego obrazu
+                            else
+                            {
+                                sb.AppendLine("P5");
+                                sb.AppendLine(wymiar + " " + wymiar);
+                                sb.AppendLine("255");
+                            }
+                            int height = testowy.Height;
+                            int width = testowy.Width;
+                            Wartosci = testowy.Values;
+                            //wczytanie wartości uzyskanych w wersji synchronicznej
+                            for (int i = 0; i < height; i++)
+                            {
+                                for (int j = 0; j < width; j++)
+                                {
+                                    sb.Append(Wartosci[i][j] + " ");
+                                }
+                                sb.AppendLine();
+                            }
+                            //wyświetlenie danych uzyskanych w wersji synchronicznej
+                            DisplayBoxKon.Text = sb.ToString();
+                            //wyświetlenie obrazu uzyskanego synchronicznie
+                            image_Copy.Source = BitmapToImageSource(ImagetoBitMap(testowy));
+                            textBox.Text += '\n' + "Czas zastosowania filtru splotowego w wersji synchronicznej: " + suma/(1000.0*powtorzenia) + " sekund.";
+                            //wersja asynchroniczna
+                            testowy = obraz;
+                            //wyznaczenie obszarów obliczeń dla wątków
+                            int podzielone = height / threadcount;
+                            //event służący do zasygnalizowania wątkowi głównemu kiedy może zsumować wyniki obliczeń wątków
+                            CountdownEvent countdownEvent;
+                            indeks = 0;
+                            float[][] dummy = new float[Wartosci.Length][];
+                            for (int i = 0; i < height; i++)
+                            {
+                                dummy[i] = new float[width];
+                            }
+
+                            suma = 0.0;
+                            if (RadioNormalne.IsChecked == true)
+                            {
+                                CountdownEvent[] EventyGlowne = new CountdownEvent[iteracje*2];
+                                for (int z = 0; z < powtorzenia; z++)
+                                {
+                                    Wartosci = obraz.Values;
+                                    for (int i = 0; i < iteracje * 2; i += 2)
+                                    {
+                                        EventyGlowne[i] = new CountdownEvent(threadcount + 1);
+                                        EventyGlowne[i + 1] = new CountdownEvent(1);
+                                    }
+                                    countdownEvent = new CountdownEvent(threadcount + 1);
+                                    sw.Restart();
+                                    for (int j = 0; j < threadcount; j++)
+                                    {
+                                        ThreadPool.QueueUserWorkItem(normalny, new object[] { height, width, dummy, podzielone * j, podzielone * (j + 1), j, countdownEvent,EventyGlowne,iteracje });
+                                    }
+                                    ThreadPool.QueueUserWorkItem(boczny, new object[] { height, width, dummy, countdownEvent,EventyGlowne,iteracje });
+                                    //czekanie aż wszystkie wątki skończą obliczenia
+                                    countdownEvent.Wait();
+                                    sw.Stop();
+                                    suma += sw.ElapsedMilliseconds;
+                                }
+                            }
+
+                            int[] poczatkowe = new int[threadcount];
+                            if (RadioZDopelnieniem.IsChecked == true)
+                            {
+                                for (int z = 0; z < powtorzenia; z++)
+                                {
+                                    Wartosci = obraz.Values;
+                                    float[][][] dummy2 = UtworzMaterialDlaWatkow(podzielone, iteracje, width, true, poczatkowe);
+                                    countdownEvent = new CountdownEvent(threadcount);
+                                    int przyznane = podzielone;
+                                    sw.Restart();
+                                    for (int i = 0; i < threadcount; i++)
+                                    {
+                                        if (i == threadcount - 1)
+                                        {
+                                            przyznane = Wartosci.Length - i * podzielone;
+                                        }
+                                        ThreadPool.QueueUserWorkItem(nowy, new object[] { przyznane, width, dummy2[i], podzielone * i, countdownEvent, iteracje });
+                                    }
+                                    countdownEvent.Wait();
+                                    sw.Stop();
+                                    suma += sw.ElapsedMilliseconds;
+                                }
+                            }
+
+                            if (RadioBezDopelnienia.IsChecked == true)
+                            {
+                                for (int z = 0; z < powtorzenia; z++)
+                                {
+                                    Wartosci = obraz.Values;
+                                    float[][][] dummy2 = UtworzMaterialDlaWatkow(podzielone, iteracje, width, false, poczatkowe);
+                                    countdownEvent = new CountdownEvent(threadcount);
+                                    int przyznane = podzielone;
+                                    sw.Restart();
+                                    for (int i = 0; i < threadcount; i++)
+                                    {
+                                        if (i == threadcount - 1)
+                                        {
+                                            przyznane = Wartosci.Length - i * podzielone;
+                                        }
+                                        ThreadPool.QueueUserWorkItem(nowy_czesci, new object[] { przyznane, width, dummy2[i],poczatkowe[i], podzielone * i, countdownEvent, iteracje });
+                                    }
+                                    countdownEvent.Wait();
+                                    sw.Stop();
+                                    suma += sw.ElapsedMilliseconds;
+                                }
+                            }
+
+                            testowy.Values = Wartosci;
+                            this.Dispatcher.Invoke(() => { PB.Value++; ; }, DispatcherPriority.ContextIdle);
+                            sb.Clear();
+                            wordcount = 4;
+                            indeks = 0;
+                            //wczytanie wartości uzyskanych w wersji asynchronicznej
+                            if (domyslny.IsChecked == false)
+                            {
+                                char c;
+                                while (wordcount > 0)
+                                {
+                                    c = tekst[indeks];
+                                    sb.Append(c);
+                                    if (c.Equals('\n') || c.Equals(' ')) wordcount--;
+                                    indeks++;
+                                }
+                            }
+                            else
+                            {
+                                sb.AppendLine("P5");
+                                sb.AppendLine(wymiar + " " + wymiar);
+                                sb.AppendLine("255");
+                            }
+                            for (int i = 0; i < height; i++)
+                            {
+                                for (int j = 0; j < width; j++)
+                                {
+                                    sb.Append(Wartosci[i][j] + " ");
+                                }
+                                sb.AppendLine();
+                            }
+                            DisplayBoxKon_Copy.Text = sb.ToString();
+                            image_Copy1.Source = BitmapToImageSource(ImagetoBitMap(testowy));
+                            if (RadioNormalne.IsChecked == true)
+                            {
+                                textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej (" + textBlock5.Text + "): " + suma / (1000.0 * powtorzenia) + " s.";
+                            }
+                            else
+                            {
+                                if (RadioZDopelnieniem.IsChecked == true)
+                                {
+                                    textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej (" + textBlock6.Text + "): " + suma / (1000.0 * powtorzenia) + " s.";
+                                }
+                                else
+                                {
+                                    textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej (" + textBlock7.Text + "): " + suma / (1000.0 * powtorzenia) + " s.";
+                                }
+                            }
+                            PB.Visibility = Visibility.Hidden;
+                            PB.Value = 0;
+                            BZapiszBin.IsEnabled = true;
+                            BZapiszObraz.IsEnabled = true;
+                            BZapiszTxt.IsEnabled = true;
+                            MessageBox.Show("Obliczenia w wersji synchronicznej i asynchronicznej zakończone!");
                         }
-                        DisplayBoxKon_Copy.Text = sb.ToString();
-                        image_Copy1.Source = BitmapToImageSource(ImagetoBitMap(testowy));
-                        textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej: " + sw.Elapsed.TotalMilliseconds + " ms.";
-                        PB.Visibility = Visibility.Hidden;
-                        PB.Value = 0;
-                        BZapiszBin.IsEnabled = true;
-                        BZapiszObraz.IsEnabled = true;
-                        BZapiszTxt.IsEnabled = true;
-                        MessageBox.Show("Obliczenia w wersji synchronicznej i asynchronicznej zakończone!");
                     }
                 }
             }
