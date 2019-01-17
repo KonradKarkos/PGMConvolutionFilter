@@ -513,7 +513,7 @@ namespace ProjektIO
             int width = (int)((object[])dane)[1];
             float[][] values = (float[][])((object[])dane)[2];
             int poczatek = 1;
-            int koniec = values.Length;
+            int koniec = values.Length-1;
             int poczatkowy = (int)((object[])dane)[3];
             int numer = (int)((object[])dane)[4];
             CountdownEvent c = (CountdownEvent)((object[])dane)[5];
@@ -524,10 +524,9 @@ namespace ProjektIO
             {
                 nowe[i] = new float[values[0].Length];
             }
-            //przetwarzanie do momentu kiedy ilość iteracji będzie zgodna z ilością nadmiarowych wierszy pikseli z obu stron
             while (iteracje > 0)
             {
-                for (int i = poczatek; i < koniec-1; i++)
+                for (int i = poczatek; i < koniec; i++)
                 {
                     for (int j = 1; j < width - 1; j++)
                     {
@@ -540,7 +539,7 @@ namespace ProjektIO
                     }
                 }
                 //sprawdzenie czy wiersz pierwszy jest wierszem skrajnym poza który wychodzą iteracje
-                if (poczatkowy - iteracje <= 0)
+                if (poczatkowy - iteracje < 0)
                 {
                     for (int i = 1; i < width - 1; i++)
                     { // ^- pierwszy wiersz pikseli obrazka
@@ -569,8 +568,7 @@ namespace ProjektIO
                 {
                     poczatek++;
                 }
-                //sprawdzenie czy wiersz ostatni jest wierszem skrajnym poza którego wychodzą iteracje
-                for (int i = poczatek+1; i < koniec-1; i++)
+                for (int i = poczatek; i < koniec; i++)
                 { // <| pierwsza kolumna pikseli obrazka
                     nowe[i][0] =
                         values[i][0] * 0.6f +
@@ -584,40 +582,43 @@ namespace ProjektIO
                         values[i + 1][width - 1] * 0.1f +
                         values[i - 1][width - 1] * 0.1f;
                 }
-                if (koniec - iteracje <= height)
+                if (koniec - iteracje < height)
                 {
                     for (int i = 1; i < width - 1; i++)
                     {
                         // v- ostatni wiersz pikseli obrazka
-                        nowe[koniec - 1][i] =
-                            values[koniec - 1][i] * 0.6f +
-                             values[koniec - 1][i + 1] * 0.1f +
-                             values[koniec - 1][i - 1] * 0.1f +
-                             values[koniec - 2][i] * 0.1f;
+                        nowe[koniec][i] =
+                            values[koniec][i] * 0.6f +
+                             values[koniec][i + 1] * 0.1f +
+                             values[koniec][i - 1] * 0.1f +
+                             values[koniec - 1][i] * 0.1f;
                     }
                     //piksel w lewym dolnym rogu
-                    nowe[koniec - 1][0] =
-                            values[koniec - 1][0] * 0.6f +
+                    nowe[koniec][0] =
+                            values[koniec][0] * 0.6f +
                             //piksel nad nim
-                            values[koniec - 2][0] * 0.1f +
+                            values[koniec - 1][0] * 0.1f +
                             //piksel na prawo
-                            values[koniec - 1][1] * 0.1f;
+                            values[koniec][1] * 0.1f;
                     //piksel w prawym dolnym rogu
-                    nowe[koniec - 1][width - 1] =
-                            values[koniec - 1][width - 1] * 0.6f +
+                    nowe[koniec][width - 1] =
+                            values[koniec][width - 1] * 0.6f +
                             //piksel na lewo
-                            values[koniec - 1][width - 2] * 0.1f +
+                            values[koniec][width - 2] * 0.1f +
                             //piksel nad nim
-                            values[koniec - 2][width - 1] * 0.1f;
+                            values[koniec - 1][width - 1] * 0.1f;
                 }
                 else
                 {
                     koniec--;
                 }
-                nowe.CopyTo(values, 0);
+                for (int i = 0; i < nowe.Length; i++)
+                {
+                    nowe[i].CopyTo(values[i], 0);
+                }
                 iteracje--;
             }
-            for (int i = poczatek; i < koniec; i++)
+            for (int i = poczatek-1; i < koniec; i++)
             {
                 nowe[i].CopyTo(Wartosci[numer], 0);
                 numer++;
@@ -668,19 +669,33 @@ namespace ProjektIO
                     if (przyznane - iteracje < 0 && przyznane - iteracje + IloscPikseliDlaKazdegoWatku < Wartosci.Length)
                     {
                         indeks = 0;
-                        if(DopelnijZerami)
-                        for (int d = 0; d < (iteracje - przyznane); d++)
+                        if (DopelnijZerami)
                         {
-                            for (int m = 0; m < width; m++)
+                            for (int d = 0; d < (iteracje - przyznane); d++)
                             {
-                                dummy2[i][d][m] = 0;
+                                for (int m = 0; m < width; m++)
+                                {
+                                    dummy2[i][d][m] = 0;
+                                }
+                            }
+                            for (int j = (iteracje - przyznane); j < IloscPikseliDlaKazdegoWatku; j++)
+                            {
+                                Wartosci[indeks].CopyTo(dummy2[i][j], 0);
+                                indeks++;
                             }
                         }
-                        poczatkowe[i] = (iteracje - przyznane);
-                        for (int j = (iteracje - przyznane); j < IloscPikseliDlaKazdegoWatku; j++)
+                        else
                         {
-                            Wartosci[indeks].CopyTo(dummy2[i][j], 0);
-                            indeks++;
+                            poczatkowe[i] = iteracje-(iteracje - przyznane);
+                            dummy2[i] = new float[IloscPikseliDlaKazdegoWatku-(iteracje-przyznane)][];
+                            for (int j = 0; j < dummy2[i].Length; j++)
+                            {
+                                dummy2[i][j] = new float[width];
+                            }
+                            for (int j = 0; j < dummy2[i].Length; j++)
+                            {
+                                Wartosci[j].CopyTo(dummy2[i][j], 0);
+                            }
                         }
                     }
                     else
@@ -689,17 +704,28 @@ namespace ProjektIO
                         if (przyznane - iteracje >= 0 && przyznane - iteracje + IloscPikseliDlaKazdegoWatku > Wartosci.Length)
                         {
                             indeks = (przyznane - iteracje);
-                            for (int j = 0; j < Wartosci.Length - (i * podzielone - iteracje); j++)
+                            if (!DopelnijZerami)
+                            {
+                                dummy2[i] = new float[Wartosci.Length - (przyznane - iteracje)][];
+                                for (int j = 0; j < dummy2[i].Length; j++)
+                                {
+                                    dummy2[i][j] = new float[width];
+                                }
+                                poczatkowe[i] = iteracje;
+                            }
+                            for (int j = 0; j < Wartosci.Length - (przyznane - iteracje); j++)
                             {
                                 Wartosci[indeks].CopyTo(dummy2[i][j], 0);
                                 indeks++;
                             }
-                            if(DopelnijZerami)
-                            for (int y = Wartosci.Length - (przyznane - iteracje); y < IloscPikseliDlaKazdegoWatku; y++)
+                            if (DopelnijZerami)
                             {
-                                for (int m = 0; m < width; m++)
+                                for (int y = Wartosci.Length - (przyznane - iteracje); y < IloscPikseliDlaKazdegoWatku; y++)
                                 {
-                                    dummy2[i][y][m] = 0;
+                                    for (int m = 0; m < width; m++)
+                                    {
+                                        dummy2[i][y][m] = 0;
+                                    }
                                 }
                             }
                         }
@@ -707,25 +733,39 @@ namespace ProjektIO
                         else
                         {
                             indeks = 0;
-                            if(DopelnijZerami)
-                            for (int d = 0; d < (iteracje - przyznane); d++)
+                            if (DopelnijZerami)
                             {
-                                for (int m = 0; m < width; m++)
+                                for (int d = 0; d < (iteracje - przyznane); d++)
                                 {
-                                    dummy2[i][d][m] = 0;
+                                    for (int m = 0; m < width; m++)
+                                    {
+                                        dummy2[i][d][m] = 0;
+                                    }
+                                }
+                                for (int j = (iteracje - przyznane); j < Wartosci.Length - (przyznane - iteracje); j++)
+                                {
+                                    Wartosci[indeks].CopyTo(dummy2[i][j], 0);
+                                    indeks++;
+                                }
+                                for (int y = Wartosci.Length - (przyznane - iteracje); y < IloscPikseliDlaKazdegoWatku; y++)
+                                {
+                                    for (int m = 0; m < width; m++)
+                                    {
+                                        dummy2[i][y][m] = 0;
+                                    }
                                 }
                             }
-                            for (int j = (iteracje - przyznane); j < Wartosci.Length - (przyznane - iteracje); j++)
+                            else
                             {
-                                Wartosci[indeks].CopyTo(dummy2[i][j], 0);
-                                indeks++;
-                            }
-                            if(DopelnijZerami)
-                            for (int y = Wartosci.Length - (przyznane - iteracje); y < IloscPikseliDlaKazdegoWatku; y++)
-                            {
-                                for (int m = 0; m < width; m++)
+                                poczatkowe[i] = iteracje - (iteracje - przyznane);
+                                dummy2[i] = new float[IloscPikseliDlaKazdegoWatku - ((iteracje - przyznane)+(IloscPikseliDlaKazdegoWatku- (Wartosci.Length - (przyznane - iteracje))))][];
+                                for (int j = 0; j < dummy2[i].Length; j++)
                                 {
-                                    dummy2[i][y][m] = 0;
+                                    dummy2[i][j] = new float[width];
+                                }
+                                for (int j = 0; j < dummy2[i].Length; j++)
+                                {
+                                    Wartosci[j].CopyTo(dummy2[i][j], 0);
                                 }
                             }
                         }

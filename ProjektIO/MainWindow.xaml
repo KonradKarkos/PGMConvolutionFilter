@@ -72,9 +72,9 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <RadioButton x:Name="RadioNormalne" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody"/>
-                    <RadioButton x:Name="RadioBezDopelnienia" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody"/>
-                    <RadioButton x:Name="RadioZDopelnieniem" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="19" Height="16"/>
+                    <RadioButton x:Name="RadioNormalne" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody" Width="518"/>
+                    <RadioButton x:Name="RadioBezDopelnienia" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody" Width="644"/>
+                    <RadioButton x:Name="RadioZDopelnieniem" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="728" Height="32"/>
                     <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Podział na wątki oczekujące na siebie nazwzajem z przekazywaniem tylko liczonego fragmentu" VerticalAlignment="Top"/>
                     <TextBlock x:Name="textBlock6" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń jeśli nie wychodzi poza zakres" VerticalAlignment="Top"/>
                     <TextBlock x:Name="textBlock7" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń dopełniony zerami jeśli wychodzi poza zakres (brak czarnej ramki na górze i dole obrazu)" VerticalAlignment="Top" Width="709"/>
