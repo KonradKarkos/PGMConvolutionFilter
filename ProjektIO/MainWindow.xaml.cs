@@ -343,35 +343,20 @@ namespace ProjektIO
             int koniec = (int)((object[])dane)[4];
             int numer = (int)((object[])dane)[5];
             CountdownEvent c = (CountdownEvent)((object[])dane)[6];
-            CountdownEvent[] c2 = (CountdownEvent[])((object[])dane)[7];
-            int iteracje = (int)((object[])dane)[8];
             //pominięcie pierwszego wiersza pikseli aby nie wychodzić poza zakres
             if (poczatek == 0) poczatek++;
             //przesunięcie granicy nakładania filtru dla ostatniego wątku jeśli wysokość obrazu nie była wielokrotnością liczby wątków
-            if (numer == threadcount-1) koniec = height-1;
-            for (int z = 0; z < iteracje * 2; z += 2)
+            if (numer == threadcount - 1) koniec = height - 1;
+            for (int i = poczatek; i < koniec; i++)
             {
-                for (int i = poczatek; i < koniec; i++)
+                for (int j = 1; j < width - 1; j++)
                 {
-                    for (int j = 1; j < width - 1; j++)
-                    {
-                        Wartosci[i][j] =
-                            values[i][j] * 0.6f +
-                            values[i][j + 1] * 0.1f +
-                            values[i][j - 1] * 0.1f +
-                            values[i - 1][j] * 0.1f +
-                            values[i + 1][j] * 0.1f;
-                    }
-                }
-                c2[z].Signal();
-                if (poczatek == 1)
-                {
-                    c2[z].Wait();
-
-                }
-                else
-                {
-                    c2[z + 1].Wait();
+                    Wartosci[i][j] =
+                        values[i][j] * 0.6f +
+                        values[i + 1][j] * 0.1f +
+                        values[i - 1][j] * 0.1f +
+                        values[i][j+1] * 0.1f +
+                        values[i][j-1] * 0.1f;
                 }
             }
             c.Signal();
@@ -383,69 +368,62 @@ namespace ProjektIO
             int width = (int)((object[])dane)[1];
             float[][] values = (float[][])((object[])dane)[2];
             CountdownEvent c = (CountdownEvent)((object[])dane)[3];
-            CountdownEvent[] c2 = (CountdownEvent[])((object[])dane)[4];
-            int iteracje = (int)((object[])dane)[5];
-            for (int z = 0; z < iteracje*2; z+=2)
-            {
-                for (int i = 1; i < width - 1; i++)
-                { // ^- pierwszy wiersz pikseli obrazka
-                    Wartosci[0][i] =
-                        values[0][i] * 0.6f +
-                        values[0][i + 1] * 0.1f +
-                        values[0][i - 1] * 0.1f +
-                        values[1][i] * 0.1f;
-                    // v- ostatni wiersz pikseli obrazka
-                    Wartosci[height - 1][i] =
-                        values[height - 1][i] * 0.6f +
-                         values[height - 1][i + 1] * 0.1f +
-                         values[height - 1][i - 1] * 0.1f +
-                         values[height - 2][i] * 0.1f;
-                }
-                for (int i = 1; i < height - 1; i++)
-                { // <| pierwsza kolumna pikseli obrazka
-                    Wartosci[i][0] =
-                        values[i][0] * 0.6f +
-                        values[i][1] * 0.1f +
-                        values[i + 1][0] * 0.1f +
-                        values[i - 1][0] * 0.1f;
-                    // >| ostatnia kolumna pikseli obrazka
-                    Wartosci[i][width - 1] =
-                        values[i][width - 1] * 0.6f +
-                        values[i][width - 2] * 0.1f +
-                        values[i + 1][width - 1] * 0.1f +
-                        values[i - 1][width - 1] * 0.1f;
-                }
-                //piksel w lewym górnym rogu obrazka
-                Wartosci[0][0] =
-                        values[0][0] * 0.6f +
-                        //piksel na prawo
-                        values[0][1] * 0.1f +
-                        //piksel pod nim
-                        values[1][0] * 0.1f;
-                //piksel w prawym górnym rogu
-                Wartosci[0][width - 1] =
-                        values[0][width - 1] * 0.6f +
-                        //piksel na lewo
-                        values[0][width - 2] * 0.1f +
-                        //piksel pod nim
-                        values[1][width - 1] * 0.1f;
-                //piksel w lewym dolnym rogu
-                Wartosci[height - 1][0] =
-                        values[height - 1][0] * 0.6f +
-                        //piksel nad nim
-                        values[height - 2][0] * 0.1f +
-                        //piksel na prawo
-                        values[height - 1][1] * 0.1f;
-                //piksel w prawym dolnym rogu
-                Wartosci[height - 1][width - 1] =
-                        values[height - 1][width - 1] * 0.6f +
-                        //piksel na lewo
-                        values[height - 1][width - 2] * 0.1f +
-                        //piksel nad nim
-                        values[height - 2][width - 1] * 0.1f;
-                c2[z].Signal();
-                c2[z + 1].Wait();
+            for (int i = 1; i < width-1; i++)
+            { // v- ostatni wiersz pikseli obrazka
+                Wartosci[height-1][i] =
+                    values[height-1][i] * 0.6f +
+                    values[height-1][i + 1] * 0.1f +
+                    values[height-1][i - 1] * 0.1f +
+                    values[height-2][i] * 0.1f;
+                // ^- pierwszy wiersz pikseli obrazka
+                Wartosci[0][i] =
+                    values[0][i] * 0.6f +
+                    values[0][i + 1] * 0.1f +
+                    values[0][i - 1] * 0.1f +
+                    values[1][i] * 0.1f;
             }
+            for (int i = 1; i < height - 1; i++)
+            { // <| pierwsza kolumna pikseli obrazka
+                Wartosci[i][0] =
+                    values[i][0] * 0.6f +
+                    values[i][1] * 0.1f +
+                    values[i + 1][0] * 0.1f +
+                    values[i - 1][0] * 0.1f;
+                // >| ostatnia kolumna pikseli obrazka
+                Wartosci[i][width - 1] =
+                    values[i][width - 1] * 0.6f +
+                    values[i][width - 2] * 0.1f +
+                    values[i + 1][width - 1] * 0.1f +
+                    values[i - 1][width - 1] * 0.1f;
+            }
+            //piksel w lewym górnym rogu obrazka
+            Wartosci[0][0] =
+                    values[0][0] * 0.6f +
+                    //piksel na prawo
+                    values[0][1] * 0.1f +
+                    //piksel pod nim
+                    values[1][0] * 0.1f;
+            //piksel w prawym górnym rogu
+            Wartosci[0][width-1] =
+                    values[0][width - 1] * 0.6f +
+                    //piksel na lewo
+                    values[0][width - 2] * 0.1f +
+                    //piksel pod nim
+                    values[1][width-1] * 0.1f;
+            //piksel w lewym dolnym rogu
+            Wartosci[height-1][0] =
+                    values[height-1][0] * 0.6f +
+                    //piksel nad nim
+                    values[height -2][0] * 0.1f +
+                    //piksel na prawo
+                    values[height-1][1] * 0.1f;
+            //piksel w prawym dolnym rogu
+            Wartosci[height-1][width-1] =
+                    values[height-1][width-1] * 0.6f +
+                    //piksel na lewo
+                    values[height-1][width-2] * 0.1f +
+                    //piksel nad nim
+                    values[height -2][width-1] * 0.1f;
             c.Signal();
         }
         //==========================================================================
@@ -468,7 +446,7 @@ namespace ProjektIO
             {
                 poczatek++;
                 koniec--;
-                for (int i = poczatek; i < koniec; i++)
+                for (int i = poczatek; i < koniec-1; i++)
                 {
                     for (int j = 1; j < width - 1; j++)
                     {
@@ -480,7 +458,7 @@ namespace ProjektIO
                             values[i-1][j] * 0.1f;
                     }
                 }
-                for (int i = poczatek; i < koniec; i++)
+                for (int i = poczatek; i < koniec-1; i++)
                 { // <| pierwsza kolumna pikseli obrazka
                     nowe[i][0] =
                         values[i][0] * 0.6f +
@@ -513,7 +491,7 @@ namespace ProjektIO
             int width = (int)((object[])dane)[1];
             float[][] values = (float[][])((object[])dane)[2];
             int poczatek = 1;
-            int koniec = values.Length-1;
+            int koniec = values.Length;
             int poczatkowy = (int)((object[])dane)[3];
             int numer = (int)((object[])dane)[4];
             CountdownEvent c = (CountdownEvent)((object[])dane)[5];
@@ -524,9 +502,9 @@ namespace ProjektIO
             {
                 nowe[i] = new float[values[0].Length];
             }
-            while (iteracje > 0)
+            while (koniec - iteracje < height && poczatkowy - iteracje < 0 && iteracje >0)
             {
-                for (int i = poczatek; i < koniec; i++)
+                for (int i = poczatek; i < koniec-1; i++)
                 {
                     for (int j = 1; j < width - 1; j++)
                     {
@@ -568,7 +546,7 @@ namespace ProjektIO
                 {
                     poczatek++;
                 }
-                for (int i = poczatek; i < koniec; i++)
+                for (int i = poczatek; i < koniec-1; i++)
                 { // <| pierwsza kolumna pikseli obrazka
                     nowe[i][0] =
                         values[i][0] * 0.6f +
@@ -587,26 +565,26 @@ namespace ProjektIO
                     for (int i = 1; i < width - 1; i++)
                     {
                         // v- ostatni wiersz pikseli obrazka
-                        nowe[koniec][i] =
-                            values[koniec][i] * 0.6f +
-                             values[koniec][i + 1] * 0.1f +
-                             values[koniec][i - 1] * 0.1f +
-                             values[koniec - 1][i] * 0.1f;
+                        nowe[koniec-1][i] =
+                            values[koniec-1][i] * 0.6f +
+                             values[koniec-1][i + 1] * 0.1f +
+                             values[koniec-1][i - 1] * 0.1f +
+                             values[koniec - 2][i] * 0.1f;
                     }
                     //piksel w lewym dolnym rogu
-                    nowe[koniec][0] =
-                            values[koniec][0] * 0.6f +
+                    nowe[koniec-1][0] =
+                            values[koniec-1][0] * 0.6f +
                             //piksel nad nim
-                            values[koniec - 1][0] * 0.1f +
+                            values[koniec - 2][0] * 0.1f +
                             //piksel na prawo
-                            values[koniec][1] * 0.1f;
+                            values[koniec-1][1] * 0.1f;
                     //piksel w prawym dolnym rogu
-                    nowe[koniec][width - 1] =
-                            values[koniec][width - 1] * 0.6f +
+                    nowe[koniec-1][width - 1] =
+                            values[koniec-1][width - 1] * 0.6f +
                             //piksel na lewo
-                            values[koniec][width - 2] * 0.1f +
+                            values[koniec-1][width - 2] * 0.1f +
                             //piksel nad nim
-                            values[koniec - 1][width - 1] * 0.1f;
+                            values[koniec - 2][width - 1] * 0.1f;
                 }
                 else
                 {
@@ -616,6 +594,158 @@ namespace ProjektIO
                 {
                     nowe[i].CopyTo(values[i], 0);
                 }
+                iteracje--;
+            }
+            while (poczatkowy - iteracje < 0 && iteracje > 0)
+            {
+                for (int i = poczatek; i < koniec-1; i++)
+                {
+                    for (int j = 1; j < width - 1; j++)
+                    {
+                        nowe[i][j] =
+                            values[i][j] * 0.6f +
+                            values[i][j + 1] * 0.1f +
+                            values[i][j - 1] * 0.1f +
+                            values[i + 1][j] * 0.1f +
+                            values[i - 1][j] * 0.1f;
+                    }
+                }
+                //sprawdzenie czy wiersz pierwszy jest wierszem skrajnym poza który wychodzą iteracje
+                for (int i = 1; i < width - 1; i++)
+                { // ^- pierwszy wiersz pikseli obrazka
+                    nowe[0][i] =
+                        values[0][i] * 0.6f +
+                        values[0][i + 1] * 0.1f +
+                        values[0][i - 1] * 0.1f +
+                        values[1][i] * 0.1f;
+                }
+                //piksel w lewym górnym rogu obrazka
+                nowe[0][0] =
+                        values[0][0] * 0.6f +
+                        //piksel na prawo
+                        values[0][1] * 0.1f +
+                        //piksel pod nim
+                        values[1][0] * 0.1f;
+                //piksel w prawym górnym rogu
+                nowe[0][width - 1] =
+                        values[0][width - 1] * 0.6f +
+                        //piksel na lewo
+                        values[0][width - 2] * 0.1f +
+                        //piksel pod nim
+                        values[1][width - 1] * 0.1f;
+                for (int i = poczatek; i < koniec-1; i++)
+                { // <| pierwsza kolumna pikseli obrazka
+                    nowe[i][0] =
+                        values[i][0] * 0.6f +
+                        values[i][1] * 0.1f +
+                        values[i + 1][0] * 0.1f +
+                        values[i - 1][0] * 0.1f;
+                    // >| ostatnia kolumna pikseli obrazka
+                    nowe[i][width - 1] =
+                        values[i][width - 1] * 0.6f +
+                        values[i][width - 2] * 0.1f +
+                        values[i + 1][width - 1] * 0.1f +
+                        values[i - 1][width - 1] * 0.1f;
+                }
+                for (int i = 0; i < nowe.Length; i++)
+                {
+                    nowe[i].CopyTo(values[i], 0);
+                }
+                koniec--;
+                iteracje--;
+            }
+            while (koniec - iteracje < height && iteracje > 0)
+            {
+                for (int i = poczatek; i < koniec-1; i++)
+                {
+                    for (int j = 1; j < width - 1; j++)
+                    {
+                        nowe[i][j] =
+                            values[i][j] * 0.6f +
+                            values[i][j + 1] * 0.1f +
+                            values[i][j - 1] * 0.1f +
+                            values[i + 1][j] * 0.1f +
+                            values[i - 1][j] * 0.1f;
+                    }
+                }
+                for (int i = poczatek; i < koniec-1; i++)
+                { // <| pierwsza kolumna pikseli obrazka
+                    nowe[i][0] =
+                        values[i][0] * 0.6f +
+                        values[i][1] * 0.1f +
+                        values[i + 1][0] * 0.1f +
+                        values[i - 1][0] * 0.1f;
+                    // >| ostatnia kolumna pikseli obrazka
+                    nowe[i][width - 1] =
+                        values[i][width - 1] * 0.6f +
+                        values[i][width - 2] * 0.1f +
+                        values[i + 1][width - 1] * 0.1f +
+                        values[i - 1][width - 1] * 0.1f;
+                }
+                for (int i = 1; i < width - 1; i++)
+                {
+                    // v- ostatni wiersz pikseli obrazka
+                    nowe[koniec-1][i] =
+                        values[koniec-1][i] * 0.6f +
+                         values[koniec-1][i + 1] * 0.1f +
+                         values[koniec-1][i - 1] * 0.1f +
+                         values[koniec - 2][i] * 0.1f;
+                }
+                //piksel w lewym dolnym rogu
+                nowe[koniec-1][0] =
+                        values[koniec-1][0] * 0.6f +
+                        //piksel nad nim
+                        values[koniec - 2][0] * 0.1f +
+                        //piksel na prawo
+                        values[koniec-1][1] * 0.1f;
+                //piksel w prawym dolnym rogu
+                nowe[koniec-1][width - 1] =
+                        values[koniec-1][width - 1] * 0.6f +
+                        //piksel na lewo
+                        values[koniec-1][width - 2] * 0.1f +
+                        //piksel nad nim
+                        values[koniec - 2][width - 1] * 0.1f;
+                for (int i = 0; i < nowe.Length; i++)
+                {
+                    nowe[i].CopyTo(values[i], 0);
+                }
+                poczatek++;
+                iteracje--;
+            }
+            while (iteracje > 0)
+            {
+                for (int i = poczatek; i < koniec-1; i++)
+                {
+                    for (int j = 1; j < width - 1; j++)
+                    {
+                        nowe[i][j] =
+                            values[i][j] * 0.6f +
+                            values[i][j + 1] * 0.1f +
+                            values[i][j - 1] * 0.1f +
+                            values[i + 1][j] * 0.1f +
+                            values[i - 1][j] * 0.1f;
+                    }
+                }
+                for (int i = poczatek; i < koniec-1; i++)
+                { // <| pierwsza kolumna pikseli obrazka
+                    nowe[i][0] =
+                        values[i][0] * 0.6f +
+                        values[i][1] * 0.1f +
+                        values[i + 1][0] * 0.1f +
+                        values[i - 1][0] * 0.1f;
+                    // >| ostatnia kolumna pikseli obrazka
+                    nowe[i][width - 1] =
+                        values[i][width - 1] * 0.6f +
+                        values[i][width - 2] * 0.1f +
+                        values[i + 1][width - 1] * 0.1f +
+                        values[i - 1][width - 1] * 0.1f;
+                }
+                for (int i = 0; i < nowe.Length; i++)
+                {
+                    nowe[i].CopyTo(values[i], 0);
+                }
+                poczatek++;
+                koniec--;
                 iteracje--;
             }
             for (int i = poczatek-1; i < koniec; i++)
@@ -812,14 +942,14 @@ namespace ProjektIO
                             for (int z = 0; z < powtorzenia; z++)
                             {
                                 testowy = obraz;
-                                sw.Restart();
                                 //synchroniczne nałożenie filtru
                                 for (int i = 0; i < iteracje; i++)
                                 {
+                                    sw.Restart();
                                     testowy = testowy.convolution();
+                                    sw.Stop();
+                                    suma += sw.ElapsedMilliseconds;
                                 }
-                                sw.Stop();
-                                suma += sw.ElapsedMilliseconds;
                             }
                             this.Dispatcher.Invoke(() => { PB.Value++; ; }, DispatcherPriority.ContextIdle);
                             StringBuilder sb = new StringBuilder();
@@ -869,7 +999,7 @@ namespace ProjektIO
                             //event służący do zasygnalizowania wątkowi głównemu kiedy może zsumować wyniki obliczeń wątków
                             CountdownEvent countdownEvent;
                             indeks = 0;
-                            float[][] dummy = new float[Wartosci.Length][];
+                            float[][] dummy = new float[height][];
                             for (int i = 0; i < height; i++)
                             {
                                 dummy[i] = new float[width];
@@ -881,23 +1011,26 @@ namespace ProjektIO
                                 CountdownEvent[] EventyGlowne = new CountdownEvent[iteracje*2];
                                 for (int z = 0; z < powtorzenia; z++)
                                 {
-                                    Wartosci = obraz.Values;
-                                    for (int i = 0; i < iteracje * 2; i += 2)
+                                    for (int u = 0; u < obraz.Values.Length; u++)
                                     {
-                                        EventyGlowne[i] = new CountdownEvent(threadcount + 1);
-                                        EventyGlowne[i + 1] = new CountdownEvent(1);
+                                        obraz.Values[u].CopyTo(Wartosci[u], 0);
                                     }
-                                    countdownEvent = new CountdownEvent(threadcount + 1);
-                                    sw.Restart();
-                                    for (int j = 0; j < threadcount; j++)
+                                    for (int i = 0; i < iteracje; i++)
                                     {
-                                        ThreadPool.QueueUserWorkItem(normalny, new object[] { height, width, dummy, podzielone * j, podzielone * (j + 1), j, countdownEvent,EventyGlowne,iteracje });
+                                        for(int j=0;j<height;j++)
+                                        Wartosci[j].CopyTo(dummy[j], 0);
+                                        countdownEvent = new CountdownEvent(threadcount + 1);
+                                        sw.Restart();
+                                        for (int j = 0; j < threadcount; j++)
+                                        {
+                                            ThreadPool.QueueUserWorkItem(normalny, new object[] { height, width, dummy, podzielone * j, podzielone * (j + 1), j, countdownEvent });
+                                        }
+                                        ThreadPool.QueueUserWorkItem(boczny, new object[] { height, width, dummy, countdownEvent });
+                                        //czekanie aż wszystkie wątki skończą obliczenia
+                                        countdownEvent.Wait();
+                                        sw.Stop();
+                                        suma += sw.ElapsedMilliseconds;
                                     }
-                                    ThreadPool.QueueUserWorkItem(boczny, new object[] { height, width, dummy, countdownEvent,EventyGlowne,iteracje });
-                                    //czekanie aż wszystkie wątki skończą obliczenia
-                                    countdownEvent.Wait();
-                                    sw.Stop();
-                                    suma += sw.ElapsedMilliseconds;
                                 }
                             }
 
@@ -906,7 +1039,10 @@ namespace ProjektIO
                             {
                                 for (int z = 0; z < powtorzenia; z++)
                                 {
-                                    Wartosci = obraz.Values;
+                                    for (int u = 0; u < obraz.Values.Length;u++)
+                                    {
+                                        obraz.Values[u].CopyTo(Wartosci[u],0);
+                                    }
                                     float[][][] dummy2 = UtworzMaterialDlaWatkow(podzielone, iteracje, width, true, poczatkowe);
                                     countdownEvent = new CountdownEvent(threadcount);
                                     int przyznane = podzielone;
@@ -929,7 +1065,10 @@ namespace ProjektIO
                             {
                                 for (int z = 0; z < powtorzenia; z++)
                                 {
-                                    Wartosci = obraz.Values;
+                                    for (int u = 0; u < obraz.Values.Length; u++)
+                                    {
+                                        obraz.Values[u].CopyTo(Wartosci[u], 0);
+                                    }
                                     float[][][] dummy2 = UtworzMaterialDlaWatkow(podzielone, iteracje, width, false, poczatkowe);
                                     countdownEvent = new CountdownEvent(threadcount);
                                     int przyznane = podzielone;
