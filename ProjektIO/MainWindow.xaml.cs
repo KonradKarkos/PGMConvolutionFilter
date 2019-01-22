@@ -429,18 +429,17 @@ namespace ProjektIO
         //==========================================================================
         private void nowy(object dane)
         {
-            int height = (int)((object[])dane)[0];
-            int width = (int)((object[])dane)[1];
-            float[][] values = (float[][])((object[])dane)[2];
+            int width = (int)((object[])dane)[0];
+            float[][] values = (float[][])((object[])dane)[1];
             int poczatek = 0;
             int koniec = values.Length;
-            int numer = (int)((object[])dane)[3];
-            CountdownEvent c = (CountdownEvent)((object[])dane)[4];
-            int iteracje = (int)((object[])dane)[5];
+            int numer = (int)((object[])dane)[2];
+            CountdownEvent c = (CountdownEvent)((object[])dane)[3];
+            int iteracje = (int)((object[])dane)[4];
             float[][] nowe = new float[values.Length][];
             for(int i=0; i<values.Length;i++)
             {
-                nowe[i] = new float[values[0].Length];
+                nowe[i] = new float[width];
             }
             for (int z = 0; z < iteracje; z++)
             {
@@ -934,6 +933,7 @@ namespace ProjektIO
                         }
                         else
                         {
+                            double[] czasy = { 0.0, 0.0 };
                             double suma = 0.0;
                             textBox.Text += '\n' + "Ustawiona ilość iteracji: " + iteracje + '\n' + "Ustawiona ilość wątków: " + threadcount;
                             PB.Visibility = Visibility.Visible;
@@ -952,6 +952,7 @@ namespace ProjektIO
                                 }
                             }
                             this.Dispatcher.Invoke(() => { PB.Value++; ; }, DispatcherPriority.ContextIdle);
+                            czasy[0] += suma;
                             StringBuilder sb = new StringBuilder();
                             int wordcount = 4;
                             int indeks = 0;
@@ -1053,7 +1054,7 @@ namespace ProjektIO
                                         {
                                             przyznane = Wartosci.Length - i * podzielone;
                                         }
-                                        ThreadPool.QueueUserWorkItem(nowy, new object[] { przyznane, width, dummy2[i], podzielone * i, countdownEvent, iteracje });
+                                        ThreadPool.QueueUserWorkItem(nowy, new object[] { width, dummy2[i], podzielone * i, countdownEvent, iteracje });
                                     }
                                     countdownEvent.Wait();
                                     sw.Stop();
@@ -1086,7 +1087,7 @@ namespace ProjektIO
                                     suma += sw.ElapsedMilliseconds;
                                 }
                             }
-
+                            czasy[1] += suma;
                             testowy.Values = Wartosci;
                             this.Dispatcher.Invoke(() => { PB.Value++; ; }, DispatcherPriority.ContextIdle);
                             sb.Clear();
@@ -1135,6 +1136,7 @@ namespace ProjektIO
                                     textBox.Text += (char)10 + "Czas zastosowania filtru splotowego w wersji asynchronicznej (" + textBlock7.Text + "): " + suma / (1000.0 * powtorzenia) + " s.";
                                 }
                             }
+                            textBox.Text += (char)10 + "Przyspieszenie w wersji asynchronicznej jest równe " + czasy[0] / czasy[1];
                             PB.Visibility = Visibility.Hidden;
                             PB.Value = 0;
                             BZapiszBin.IsEnabled = true;
@@ -1284,6 +1286,7 @@ namespace ProjektIO
             char c = '\n';
             MessageBox.Show("Program służy do zastosowania filtru splotowego domyślnie 200 razy na pliku pgm za pomocą 11 wątków (pomiędzy 10 jest podzielone wnętrze obrazu, a 1 zajmuje się pikselami brzegowymi) i porównania czasowego z wersją synchroniczną." +
                 c + "Wyniki obu operacji można porównać z oryginalnym obrazem w zakładkach \"Tekstowe\" i \"Obraz\" przełączając widok na wynik operacji asynchronicznej i synchronicznej przyciskiem w prawym górnym rogu okna." +
+                c+ "Dostępne są trzy różne metody asynchroniczne z czego dwie polegają na wątkach nieoczekujących na siebie nawzajem, ponieważ jest im przekazywany cały potrzebny do obliczeń fragment obrazu (wielkość jest determinowana przez ilość iteracji)."+
                 c + "Wyniki są zapisywane do pliku \"Results.txt\"");
         }
         //metoda sprawdzająca czy do danego textboxa są wprowadzane tylko liczby
