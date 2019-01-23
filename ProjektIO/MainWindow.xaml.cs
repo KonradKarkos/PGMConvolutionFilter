@@ -437,7 +437,8 @@ namespace ProjektIO
             CountdownEvent c = (CountdownEvent)((object[])dane)[3];
             int iteracje = (int)((object[])dane)[4];
             float[][] nowe = new float[values.Length][];
-            for(int i=0; i<values.Length;i++)
+            float[][] tmp = new float[values.Length][];
+            for (int i=0; i<values.Length;i++)
             {
                 nowe[i] = new float[width];
             }
@@ -471,14 +472,13 @@ namespace ProjektIO
                         values[i + 1][width - 1] * 0.1f +
                         values[i - 1][width - 1] * 0.1f;
                 }
-                for (int i = 0; i < nowe.Length; i++)
-                {
-                    nowe[i].CopyTo(values[i], 0);
-                }
+                tmp = values;
+                values = nowe;
+                nowe = tmp;
             }
             for(int i=poczatek;i<koniec;i++)
             {
-                nowe[i].CopyTo(Wartosci[numer], 0);
+                Wartosci[numer] = nowe[i];
                 numer++;
             }
             c.Signal();
@@ -497,9 +497,10 @@ namespace ProjektIO
             int iteracje = (int)((object[])dane)[6];
             float[][] nowe = new float[values.Length][];
             height = height + poczatkowy;
+            float[][] tmp = new float[values.Length][];
             for (int i = 0; i < values.Length; i++)
             {
-                nowe[i] = new float[values[0].Length];
+                nowe[i] = new float[width];
             }
             while (koniec - iteracje < height && poczatkowy - iteracje < 0 && iteracje >0)
             {
@@ -589,10 +590,9 @@ namespace ProjektIO
                 {
                     koniec--;
                 }
-                for (int i = 0; i < nowe.Length; i++)
-                {
-                    nowe[i].CopyTo(values[i], 0);
-                }
+                tmp = values;
+                values = nowe;
+                nowe = tmp;
                 iteracje--;
             }
             while (poczatkowy - iteracje < 0 && iteracje > 0)
@@ -646,10 +646,9 @@ namespace ProjektIO
                         values[i + 1][width - 1] * 0.1f +
                         values[i - 1][width - 1] * 0.1f;
                 }
-                for (int i = 0; i < nowe.Length; i++)
-                {
-                    nowe[i].CopyTo(values[i], 0);
-                }
+                tmp = values;
+                values = nowe;
+                nowe = tmp;
                 koniec--;
                 iteracje--;
             }
@@ -704,10 +703,9 @@ namespace ProjektIO
                         values[koniec-1][width - 2] * 0.1f +
                         //piksel nad nim
                         values[koniec - 2][width - 1] * 0.1f;
-                for (int i = 0; i < nowe.Length; i++)
-                {
-                    nowe[i].CopyTo(values[i], 0);
-                }
+                tmp = values;
+                values = nowe;
+                nowe = tmp;
                 poczatek++;
                 iteracje--;
             }
@@ -739,17 +737,16 @@ namespace ProjektIO
                         values[i + 1][width - 1] * 0.1f +
                         values[i - 1][width - 1] * 0.1f;
                 }
-                for (int i = 0; i < nowe.Length; i++)
-                {
-                    nowe[i].CopyTo(values[i], 0);
-                }
+                tmp = values;
+                values = nowe;
+                nowe = tmp;
                 poczatek++;
                 koniec--;
                 iteracje--;
             }
             for (int i = poczatek-1; i < koniec; i++)
             {
-                nowe[i].CopyTo(Wartosci[numer], 0);
+                Wartosci[numer] = nowe[i];
                 numer++;
             }
             c.Signal();
