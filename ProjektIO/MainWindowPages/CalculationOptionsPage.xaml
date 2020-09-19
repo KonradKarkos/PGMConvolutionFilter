@@ -1,0 +1,21 @@
+﻿<Page x:Class="ProjektIO.MainWindowPages.CalculationOptionsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ProjektIO.MainWindowPages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="CalculationOptionsPage">
+
+    <Grid Background="#FFE5E5E5">
+        <RadioButton x:Name="RadioNormalne" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody" Width="441"/>
+        <RadioButton x:Name="RadioBezDopelnienia" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody" Width="644"/>
+        <RadioButton x:Name="RadioZDopelnieniem" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="728" Height="32"/>
+        <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Podział na wątki tworzone od nowa co iterację z przekazywaniem całego obrazu" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock6" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń jeśli nie wychodzi poza zakres" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock7" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń dopełniony zerami jeśli wychodzi poza zakres (brak czarnej ramki na górze i dole obrazu)" VerticalAlignment="Top" Width="709"/>
+        <TextBox x:Name="BoxPowtorzenia" HorizontalAlignment="Left" Height="16" Margin="346,366,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
+        <TextBlock x:Name="textBlock8" HorizontalAlignment="Left" Margin="10,366,0,0" TextWrapping="Wrap" Text="Liczba powtórzeń obliczeń dla uśrednienia wyniku czasowego: " VerticalAlignment="Top"/>
+    </Grid>
+</Page>

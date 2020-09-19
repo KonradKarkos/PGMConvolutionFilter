@@ -7,82 +7,22 @@
         mc:Ignorable="d"
         Title="Filtr splotowy" Height="450" Width="800" ResizeMode="CanMinimize">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="420" VerticalAlignment="Top" Width="794" Margin="0,0,-0.4,0">
+        <StackPanel>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged">
             <TabItem Header="Wyniki i opcje">
-                <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="388" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-                    <TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Wyniki działania programu:" VerticalAlignment="Top"/>
-                    <Button x:Name="button" Content="Pomoc" HorizontalAlignment="Left" Margin="703,10,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-                    <Button x:Name="button1" Content="Start" HorizontalAlignment="Left" Margin="703,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="Button1_Click"/>
-                    <Button x:Name="BZapiszObraz" Content="Zapisz jako obraz" HorizontalAlignment="Left" Margin="403,249,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszObraz_Click" IsEnabled="False"/>
-                    <TextBox x:Name="BoxObrazKon" HorizontalAlignment="Left" Height="19" Margin="403,273,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-                    <Button x:Name="BWczytajPocz" Content="Wczytaj z pliku" HorizontalAlignment="Left" Margin="403,105,0,0" VerticalAlignment="Top" Width="185" Click="BWczytajObraz_Click" IsEnabled="False"/>
-                    <Button x:Name="BZapiszBin" Content="Zapisz do pliku binarnego" HorizontalAlignment="Left" Margin="403,153,0,0" VerticalAlignment="Top" Width="375" IsEnabled="False" Click="BZapiszBin_Click"/>
-                    <TextBox x:Name="BoxPoczBin" HorizontalAlignment="Left" Height="19" Margin="403,129,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375" IsEnabled="False" TextChanged="BoxPoczBin_TextChanged"/>
-                    <TextBox x:Name="BoxKonBin" HorizontalAlignment="Left" Height="19" Margin="403,177,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-                    <Button x:Name="BWybierz_Bin" Content="Wybierz plik" HorizontalAlignment="Left" Margin="593,105,0,0" VerticalAlignment="Top" Width="185" Click="Wybierz_Bin_Click"/>
-                    <Button x:Name="BZapiszTxt" Content="Zapisz jako txt" HorizontalAlignment="Left" Margin="403,201,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszTxt_Click" IsEnabled="False"/>
-                    <TextBox x:Name="BoxTxtKon" HorizontalAlignment="Left" Height="19" Margin="403,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-                    <CheckBox x:Name="domyslny" Content="Użyj domyślnego pustego obrazu" HorizontalAlignment="Left" Margin="403,362,0,0" VerticalAlignment="Top" Checked="Domyslny_Checked" Unchecked="Domyslny_Unchecked"/>
-                    <ProgressBar x:Name="PB" HorizontalAlignment="Left" Height="29" Margin="403,71,0,0" VerticalAlignment="Top" Width="375" Maximum="2" Visibility="Hidden" Value="0" Minimum="0"/>
-                    <TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="403,321,0,0" TextWrapping="Wrap" Text="Ilość iteracji:" VerticalAlignment="Top"/>
-                    <TextBox x:Name="BoxIteracje" HorizontalAlignment="Left" Height="16" Margin="473,321,0,0" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
-                    <TextBlock x:Name="textBlock4" HorizontalAlignment="Left" Margin="598,321,0,0" TextWrapping="Wrap" Text="Ilość wątków:" VerticalAlignment="Top"/>
-                    <TextBox x:Name="BoxWatki" HorizontalAlignment="Left" Height="16" Margin="673,321,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="105" PreviewTextInput="Sprawdz_liczby"/>
-                    <Button x:Name="BZapisz" Content="Zapisz wyniki do pliku" HorizontalAlignment="Left" Margin="403,297,0,0" VerticalAlignment="Top" Width="375" Click="BZapiszWyniki_Click"/>
-                    <TextBox x:Name="BoxWYmiary" HorizontalAlignment="Left" Height="17" Margin="606,362,0,0" TextWrapping="Wrap" Text="1024" VerticalAlignment="Top" Width="39" PreviewTextInput="Sprawdz_liczby" TextChanged="BoxWYmiary_TextChanged"/>
-                    <TextBlock x:Name="BlockWymiar2" HorizontalAlignment="Left" Margin="650,362,0,0" TextWrapping="Wrap" Text="x1024" VerticalAlignment="Top" Width="38"/>
-                    <CheckBox x:Name="CheckSzachownica" Content="Zamień go na szachownicę o podanej liczbie pól:" HorizontalAlignment="Left" Margin="403,342,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-                    <TextBox x:Name="BoxSzachownica" HorizontalAlignment="Left" Height="17" Margin="686,340,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="33" IsEnabled="False" PreviewTextInput="Sprawdz_liczby" TextChanged="BoxSzachownica_TextChanged"/>
-                    <TextBlock x:Name="BlockSzachownica" HorizontalAlignment="Left" Margin="724,341,0,0" TextWrapping="Wrap" Text="x8" VerticalAlignment="Top" Width="38"/>
-                </Grid>
+                
             </TabItem>
             <TabItem Header="Tekstowe">
-                <Grid Background="#FFE5E5E5">
-                    <TextBox x:Name="DisplayBoxPocz" HorizontalAlignment="Left" Height="356" Margin="10,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
-                    <TextBox x:Name="DisplayBoxKon" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
-                    <TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Obraz początkowy w formacie PGM:" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Obraz końcowy:" VerticalAlignment="Top"/>
-                    <Button x:Name="BSwitchTxt" Content="Synchroniczny" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="BSwitchTxt_Click"/>
-                    <TextBox x:Name="DisplayBoxKon_Copy" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" Visibility="Hidden" IsReadOnly="True"/>
-                </Grid>
+
             </TabItem>
             <TabItem Header="Obraz">
-                <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Image x:Name="image" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" VerticalAlignment="Top" Width="375"/>
-                    <Image x:Name="image_Copy" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Visible"/>
-                    <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Obraz początkowy w formacie PGM:" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="textBlock1_Copy" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Obraz końcowy:" VerticalAlignment="Top"/>
-                    <Button x:Name="BSwitchImg" Content="Synchroniczny" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="BSwitchImg_Click"/>
-                    <Image x:Name="image_Copy1" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Hidden"/>
-                </Grid>
+
             </TabItem>
             <TabItem Header="Wybór metody asynchronicznej">
-                <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <RadioButton x:Name="RadioNormalne" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody" Width="441"/>
-                    <RadioButton x:Name="RadioBezDopelnienia" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody" Width="644"/>
-                    <RadioButton x:Name="RadioZDopelnieniem" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="728" Height="32"/>
-                    <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Podział na wątki tworzone od nowa co iterację z przekazywaniem całego obrazu" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="textBlock6" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń jeśli nie wychodzi poza zakres" VerticalAlignment="Top"/>
-                    <TextBlock x:Name="textBlock7" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń dopełniony zerami jeśli wychodzi poza zakres (brak czarnej ramki na górze i dole obrazu)" VerticalAlignment="Top" Width="709"/>
-                    <TextBox x:Name="BoxPowtorzenia" HorizontalAlignment="Left" Height="16" Margin="346,366,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
-                    <TextBlock x:Name="textBlock8" HorizontalAlignment="Left" Margin="10,366,0,0" TextWrapping="Wrap" Text="Liczba powtórzeń obliczeń dla uśrednienia wyniku czasowego: " VerticalAlignment="Top"/>
-                </Grid>
+
             </TabItem>
         </TabControl>
-
+        <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden"></Frame>
+        </StackPanel>
     </Grid>
 </Window>

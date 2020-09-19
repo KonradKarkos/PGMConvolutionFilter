@@ -56,6 +56,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="MainWindowPages\CalculationOptionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindowPages\ImageTextResultRepresentationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindowPages\ImageVisualResultRepresentationPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindowPages\LogsAndInputOutputOptionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -63,6 +79,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindowPages\CalculationOptionsPage.xaml.cs">
+      <DependentUpon>CalculationOptionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowPages\ImageTextResultRepresentationPage.xaml.cs">
+      <DependentUpon>ImageTextResultRepresentationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowPages\ImageVisualResultRepresentationPage.xaml.cs">
+      <DependentUpon>ImageVisualResultRepresentationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindowPages\LogsAndInputOutputOptionsPage.xaml.cs">
+      <DependentUpon>LogsAndInputOutputOptionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
