@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ProjektIO
+namespace PGMConvolutionFilter
 {
     /// <summary>
     /// Logika interakcji dla klasy ImageVisualResultRepresentationPage.xaml

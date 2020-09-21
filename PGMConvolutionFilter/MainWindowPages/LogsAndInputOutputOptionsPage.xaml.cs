@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Color = System.Drawing.Color;
 
-namespace ProjektIO
+namespace PGMConvolutionFilter
 {
     /// <summary>
     /// Logika interakcji dla klasy LogsAndInputOutputOptions.xaml

@@ -1,19 +1,8 @@
-﻿using Microsoft.Win32;
-using ProjektIO.MainWindowPages;
-using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Text;
-using System.Threading;
+﻿using PGMConvolutionFilter.MainWindowPages;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using Color = System.Drawing.Color;
 
-namespace ProjektIO
+namespace PGMConvolutionFilter
 {
     public partial class MainWindow : Window
     {

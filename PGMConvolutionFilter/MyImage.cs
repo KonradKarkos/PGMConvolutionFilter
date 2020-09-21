@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjektIO
+namespace PGMConvolutionFilter
 {
     class MyImage
     {

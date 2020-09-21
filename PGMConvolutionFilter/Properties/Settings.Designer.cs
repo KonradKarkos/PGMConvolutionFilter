@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ProjektIO.Properties
+namespace PGMConvolutionFilter.Properties
 {
 
 
