@@ -5,23 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PGMConvolutionFilter"
         mc:Ignorable="d"
-        Title="Filtr splotowy" Height="450" Width="800" ResizeMode="CanMinimize">
+        Title="Convolution filter" Height="450" Width="800">
     <Grid>
         <StackPanel>
         <TabControl x:Name="tabControl" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged">
-            <TabItem Header="Wyniki i opcje">
-                
-            </TabItem>
-            <TabItem Header="Tekstowe">
-
-            </TabItem>
-            <TabItem Header="Obraz">
-
-            </TabItem>
-            <TabItem Header="Wybór metody asynchronicznej">
-
-            </TabItem>
-        </TabControl>
+                <TabItem x:Name="logsAndOptionsTabItem" Header="Logs and options"/>
+                <TabItem x:Name="textResultsTabItem" Header="Text results"/>
+                <TabItem x:Name="imageResultsTabItem" Header="Image results"/>
+                <TabItem x:Name="asynchronousMethodsTabItem" Header="Choose asynchronous method"/>
+            </TabControl>
         <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden"></Frame>
         </StackPanel>
     </Grid>

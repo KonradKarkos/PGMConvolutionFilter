@@ -9,11 +9,11 @@
       Title="ImageVisualResultRepresentationPage">
 
     <Grid Background="#FFE5E5E5">
-        <Image x:Name="image" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" VerticalAlignment="Top" Width="375"/>
-        <Image x:Name="image_Copy" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Visible"/>
-        <TextBlock x:Name="textBlock_Copy" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Obraz początkowy w formacie PGM:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock1_Copy" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Obraz końcowy:" VerticalAlignment="Top"/>
-        <Button x:Name="BSwitchImg" Content="Synchroniczny" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="BSwitchImg_Click"/>
-        <Image x:Name="image_Copy1" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Hidden"/>
+        <Image x:Name="plainImage" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" VerticalAlignment="Top" Width="375"/>
+        <Image x:Name="synchronouslyFilteredImage" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Visible"/>
+        <TextBlock x:Name="plainImageTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Plain image in PGM format:" VerticalAlignment="Top"/>
+        <TextBlock x:Name="filteredImageTextBlock" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Result image:" VerticalAlignment="Top"/>
+        <Button x:Name="switchDisplayedResultsButton" Content="Synchronous" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="switchDisplayedResultsButton_Click"/>
+        <Image x:Name="asynchronouslyFilteredImage" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Hidden"/>
     </Grid>
 </Page>

@@ -9,13 +9,13 @@
       Title="CalculationOptionsPage">
 
     <Grid Background="#FFE5E5E5">
-        <RadioButton x:Name="RadioNormalne" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody" Width="441"/>
-        <RadioButton x:Name="RadioBezDopelnienia" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody" Width="644"/>
-        <RadioButton x:Name="RadioZDopelnieniem" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="728" Height="32"/>
-        <TextBlock x:Name="textBlock5" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Podział na wątki tworzone od nowa co iterację z przekazywaniem całego obrazu" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock6" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń jeśli nie wychodzi poza zakres" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textBlock7" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Podział na wątki nieoczekujące, które otrzymają potrzebny fragment obrazu do obliczeń dopełniony zerami jeśli wychodzi poza zakres (brak czarnej ramki na górze i dole obrazu)" VerticalAlignment="Top" Width="709"/>
-        <TextBox x:Name="BoxPowtorzenia" HorizontalAlignment="Left" Height="16" Margin="346,366,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" PreviewTextInput="Sprawdz_liczby"/>
-        <TextBlock x:Name="textBlock8" HorizontalAlignment="Left" Margin="10,366,0,0" TextWrapping="Wrap" Text="Liczba powtórzeń obliczeń dla uśrednienia wyniku czasowego: " VerticalAlignment="Top"/>
+        <RadioButton x:Name="dependentThreadsRadioButton" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody" Width="441"/>
+        <RadioButton x:Name="independentThreadsWithoutZeroDataFillingRadioButton" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody" Width="644"/>
+        <RadioButton x:Name="independentThreadsWithZeroDataFillingRadioButton" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="728" Height="32"/>
+        <TextBlock x:Name="dependentThreadsTextBlock" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Create new threads every iteration and pass whole image" VerticalAlignment="Top"/>
+        <TextBlock x:Name="independentThreadsWithoutZeroDataFillingTextBlock" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Create independent threads that will get whole, needed for calculation, image fragment if it doesn't exceed image dimensions" VerticalAlignment="Top"/>
+        <TextBlock x:Name="independentThreadsWithZeroDataFillingTextBlock" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Create idenpendent threads that will get whole, nedeed for calculation, image fragment which parts that exceed image dimensions will be filled with zeros (differences in black frame at the top and bottom)" VerticalAlignment="Top" Width="709"/>
+        <TextBox x:Name="calculationRepeatsTextBox" HorizontalAlignment="Left" Height="16" Margin="503,368,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" PreviewTextInput="AllowOnlyDigits"/>
+        <TextBlock x:Name="calculationRepeatsTextBlock" HorizontalAlignment="Left" Margin="10,366,0,0" TextWrapping="Wrap" Text="Repeats amount of synchronous and asynchronous calculations to average computing time: " VerticalAlignment="Top"/>
     </Grid>
 </Page>

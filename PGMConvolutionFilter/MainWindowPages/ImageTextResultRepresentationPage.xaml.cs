@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace PGMConvolutionFilter
 {
@@ -24,20 +16,83 @@ namespace PGMConvolutionFilter
         {
             InitializeComponent();
         }
-        //zmiana widoku na plik powstały synchronicznie/asynchronicznie
-        private void BSwitchTxt_Click(object sender, RoutedEventArgs e)
+        private void switchDisplayedResultsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (DisplayBoxKon.Visibility == Visibility.Visible)
+            if (synchronouslyFilteredImageDisplayTextBox.Visibility == Visibility.Visible)
             {
-                DisplayBoxKon_Copy.Visibility = Visibility.Visible;
-                DisplayBoxKon.Visibility = Visibility.Hidden;
-                BSwitchTxt.Content = "Asynchroniczny";
+                asynchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Visible;
+                synchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Hidden;
+                switchDisplayedResultsButton.Content = "Asynchronous";
             }
             else
             {
-                DisplayBoxKon.Visibility = Visibility.Visible;
-                DisplayBoxKon_Copy.Visibility = Visibility.Hidden;
-                BSwitchTxt.Content = "Synchroniczy";
+                synchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Visible;
+                asynchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Hidden;
+                switchDisplayedResultsButton.Content = "Synchronous";
+            }
+        }
+        public void SaveResultImageAsText(string filePath)
+        {
+            StreamWriter sw = new StreamWriter(filePath);
+            int lineCount = synchronouslyFilteredImageDisplayTextBox.LineCount;
+            if (lineCount <= 0)
+            {
+                for (int i = 0; i < lineCount; i++)
+                {
+                    sw.WriteLine(synchronouslyFilteredImageDisplayTextBox.GetLineText(i));
+                }
+            }
+            else
+            {
+                sw.Write(synchronouslyFilteredImageDisplayTextBox.Text);
+            }
+            sw.Dispose();
+            MessageBox.Show("Successfully saved PGM as txt file.");
+        }
+        public void SaveResultImageAsBinary(string filePath)
+        {
+            BinaryWriter bw = new BinaryWriter(File.Open(filePath, FileMode.OpenOrCreate));
+            StringBuilder sb = new StringBuilder();
+            String resultImageTextRepresentaton = synchronouslyFilteredImageDisplayTextBox.Text;
+            bw.Write('P');
+            bw.Write('5');
+            bw.Write('\n');
+            int PGMFormatKeyWordCount = 3;
+            int inTextIndex = 2;
+            while (!Char.IsDigit(resultImageTextRepresentaton[inTextIndex])) inTextIndex++;
+            while (PGMFormatKeyWordCount > 0)
+            {
+                bw.Write(resultImageTextRepresentaton[inTextIndex]);
+                if (resultImageTextRepresentaton[inTextIndex].Equals('\n') || resultImageTextRepresentaton[inTextIndex].Equals(' ')) PGMFormatKeyWordCount--;
+                inTextIndex++;
+            }
+            for (int i = inTextIndex; i < synchronouslyFilteredImageDisplayTextBox.Text.Length; i++)
+            {
+                while (!resultImageTextRepresentaton[i].Equals('\n') && !resultImageTextRepresentaton[i].Equals(' ') && !resultImageTextRepresentaton[i].Equals('\r'))
+                {
+                    sb.Append(resultImageTextRepresentaton[i]);
+                    i++;
+                }
+                if (sb.Length > 0)
+                {
+                    bw.Write(byte.Parse(sb.ToString().Split(',')[0]));
+                    sb.Clear();
+                }
+            }
+            bw.Dispose();
+            MessageBox.Show("Successfully saved results.");
+        }
+        public void CheckForResultsDifferences()
+        {
+            if (synchronouslyFilteredImageDisplayTextBox.Text.Equals(asynchronouslyFilteredImageDisplayTextBox.Text))
+            {
+                displayEqualResultsTextBlock.Foreground = Brushes.Green;
+                displayEqualResultsTextBlock.Text = "Yes";
+            }
+            else
+            {
+                displayEqualResultsTextBlock.Foreground = Brushes.Red;
+                displayEqualResultsTextBlock.Text = "No";
             }
         }
     }

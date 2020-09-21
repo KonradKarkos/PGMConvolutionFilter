@@ -21,18 +21,18 @@ namespace PGMConvolutionFilter
 
         private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch(((TabItem)tabControl.Items[tabControl.SelectedIndex]).Header)
+            switch(((TabItem)tabControl.Items[tabControl.SelectedIndex]).Name)
             {
-                case "Wyniki i opcje":
+                case "logsAndOptionsTabItem":
                     mainFrame.Content = LogsAndInputOutputOptionsPage;
                     break;
-                case "Tekstowe":
+                case "textResultsTabItem":
                     mainFrame.Content = ImageTextResultRepresentationPage;
                     break;
-                case "Obraz":
+                case "imageResultsTabItem":
                     mainFrame.Content = ImageVisualResultRepresentationPage;
                     break;
-                case "Wybór metody asynchronicznej":
+                case "asynchronousMethodsTabItem":
                     mainFrame.Content = CalculationOptionsPage;
                     break;
                 default:
