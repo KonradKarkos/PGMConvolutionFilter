@@ -528,7 +528,7 @@ namespace PGMConvolutionFilter
                     {
                         UploadedImage.Values[u].CopyTo(ImagePixelsValues[u], 0);
                     }
-                    float[][][] threadsValuesToCompute = DivideImagePixelValuesBetweenThreads(amountOfRowsToApplyFilterOnBySingleThread, iterationsPerRepeat, width, true, fragmentsToComputeStartingRowsInnerIndexes);
+                    float[][][] threadsValuesToCompute = DivideImagePixelValuesBetweenThreadsWithZeroFillers(amountOfRowsToApplyFilterOnBySingleThread, iterationsPerRepeat, width);
                     countdownEvent = new CountdownEvent(ThreadAmount);
                     backgroundWorkers = new BackgroundWorker[ThreadAmount];
                     sw.Restart();
@@ -553,7 +553,7 @@ namespace PGMConvolutionFilter
                     {
                         UploadedImage.Values[u].CopyTo(ImagePixelsValues[u], 0);
                     }
-                    float[][][] threadsValuesToCompute = DivideImagePixelValuesBetweenThreads(amountOfRowsToApplyFilterOnBySingleThread, iterationsPerRepeat, width, false, fragmentsToComputeStartingRowsInnerIndexes);
+                    float[][][] threadsValuesToCompute = DivideImagePixelValuesBetweenThreadsWithoutZeroFillers(amountOfRowsToApplyFilterOnBySingleThread, iterationsPerRepeat, width, fragmentsToComputeStartingRowsInnerIndexes);
                     countdownEvent = new CountdownEvent(ThreadAmount);
                     backgroundWorkers = new BackgroundWorker[ThreadAmount];
                     sw.Restart();
@@ -580,11 +580,13 @@ namespace PGMConvolutionFilter
                     (sender as BackgroundWorker).ReportProgress(0);
                 }
             }
-            e.Result = repeatAmount;
+            e.Result = new int[] { repeatAmount, mode };
         }
         private void AsynchronousBackgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            int repeatAmount = (int)e.Result;
+            int[] values = (int[])e.Result;
+            int repeatAmount = values[0];
+            int mode = values[1];
             MyImage temporaryImageToPerformCalculations = new MyImage(UploadedImage.Width, UploadedImage.Height);
             temporaryImageToPerformCalculations.Values = ImagePixelsValues;
             int width = temporaryImageToPerformCalculations.Width;
@@ -619,18 +621,17 @@ namespace PGMConvolutionFilter
             MainWindow.ImageTextResultRepresentationPage.asynchronouslyFilteredImageDisplayTextBox.Text = stringBuilder.ToString();
             MainWindow.ImageVisualResultRepresentationPage.asynchronouslyFilteredImage.Source = BitmapToImageSource(ImageToBitMap(temporaryImageToPerformCalculations));
             MainWindow.ImageTextResultRepresentationPage.CheckForResultsDifferences();
-            if (MainWindow.CalculationOptionsPage.dependentThreadsRadioButton.IsChecked == true)
+            if (mode == 0)
             {
                 logsTextBox.Text += "\nTime of applying convolution filter asynchronously (" + MainWindow.CalculationOptionsPage.dependentThreadsTextBlock.Text + "): " + AsynchronousCalculationTime / (1000.0 * repeatAmount) + " s.";
             }
-            else if (MainWindow.CalculationOptionsPage.independentThreadsWithoutZeroDataFillingRadioButton.IsChecked == true)
-            {
-
-                logsTextBox.Text += "\nTime of applying convolution filter asynchronously (" + MainWindow.CalculationOptionsPage.independentThreadsWithoutZeroDataFillingTextBlock.Text + "): " + AsynchronousCalculationTime / (1000.0 * repeatAmount) + " s.";
-            }
-            else
+            else if (mode == 1)
             {
                 logsTextBox.Text += "\nTime of applying convolution filter asynchronously (" + MainWindow.CalculationOptionsPage.independentThreadsWithZeroDataFillingTextBlock.Text + "): " + AsynchronousCalculationTime / (1000.0 * repeatAmount) + " s.";
+            }
+            else if (mode == 2)
+            {
+                logsTextBox.Text += "\nTime of applying convolution filter asynchronously (" + MainWindow.CalculationOptionsPage.independentThreadsWithoutZeroDataFillingTextBlock.Text + "): " + AsynchronousCalculationTime / (1000.0 * repeatAmount) + " s.";
             }
             logsTextBox.Text += "\nAsynchronous is " + SynchronousCalculationTime / AsynchronousCalculationTime + " times faster";
             PB.Visibility = Visibility.Hidden;
@@ -1080,7 +1081,7 @@ namespace PGMConvolutionFilter
             }
             c.Signal();
         }
-        private float[][][] DivideImagePixelValuesBetweenThreads(int amountOfRowsToApplyFilterOnBySingleThread, int iterations, int width, bool fillMissingPixelsWithZeros, int[] fragmentsToComputeStartingRowsInnerIndexes)
+        private float[][][] DivideImagePixelValuesBetweenThreadsWithoutZeroFillers(int amountOfRowsToApplyFilterOnBySingleThread, int iterations, int width, int[] fragmentsToComputeStartingRowsInnerIndexes)
         {
             int rowsPerThread = amountOfRowsToApplyFilterOnBySingleThread + iterations * 2;
             float[][][] threadsValuesToCompute = new float[ThreadAmount][][];
@@ -1118,94 +1119,129 @@ namespace PGMConvolutionFilter
                 }
                 else if (threadStartingRow - iterations < 0 && threadStartingRow - iterations + rowsPerThread < ImagePixelsValues.Length)
                 {
-                    rowToCopyIndex = 0;
-                    if (fillMissingPixelsWithZeros)
+                    fragmentsToComputeStartingRowsInnerIndexes[i] = iterations - (iterations - threadStartingRow);
+                    threadsValuesToCompute[i] = new float[rowsPerThread - (iterations - threadStartingRow)][];
+                    for (int j = 0; j < threadsValuesToCompute[i].Length; j++)
                     {
-                        for (int d = 0; d < (iterations - threadStartingRow); d++)
-                        {
-                            for (int m = 0; m < width; m++)
-                            {
-                                threadsValuesToCompute[i][d][m] = 0;
-                            }
-                        }
-                        for (int j = (iterations - threadStartingRow); j < rowsPerThread; j++)
-                        {
-                            ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
-                            rowToCopyIndex++;
-                        }
-                    }
-                    else
-                    {
-                        fragmentsToComputeStartingRowsInnerIndexes[i] = iterations - (iterations - threadStartingRow);
-                        threadsValuesToCompute[i] = new float[rowsPerThread - (iterations - threadStartingRow)][];
-                        for (int j = 0; j < threadsValuesToCompute[i].Length; j++)
-                        {
-                            threadsValuesToCompute[i][j] = new float[width];
-                            ImagePixelsValues[j].CopyTo(threadsValuesToCompute[i][j], 0);
-                        }
+                        threadsValuesToCompute[i][j] = new float[width];
+                        ImagePixelsValues[j].CopyTo(threadsValuesToCompute[i][j], 0);
                     }
                 }
                 else if (threadStartingRow - iterations >= 0 && threadStartingRow - iterations + rowsPerThread > ImagePixelsValues.Length)
                 {
                     rowToCopyIndex = (threadStartingRow - iterations);
-                    if (!fillMissingPixelsWithZeros)
+                    threadsValuesToCompute[i] = new float[ImagePixelsValues.Length - rowToCopyIndex][];
+                    for (int j = 0; j < threadsValuesToCompute[i].Length; j++)
                     {
-                        threadsValuesToCompute[i] = new float[ImagePixelsValues.Length - rowToCopyIndex][];
-                        for (int j = 0; j < threadsValuesToCompute[i].Length; j++)
-                        {
-                            threadsValuesToCompute[i][j] = new float[width];
-                        }
-                        fragmentsToComputeStartingRowsInnerIndexes[i] = iterations;
+                        threadsValuesToCompute[i][j] = new float[width];
                     }
+                    fragmentsToComputeStartingRowsInnerIndexes[i] = iterations;
                     for (int j = 0; j < ImagePixelsValues.Length - (threadStartingRow - iterations); j++)
                     {
                         ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
                         rowToCopyIndex++;
                     }
-                    if (fillMissingPixelsWithZeros)
+                }
+                else
+                {
+                    fragmentsToComputeStartingRowsInnerIndexes[i] = iterations - (iterations - threadStartingRow);
+                    threadsValuesToCompute[i] = new float[rowsPerThread - ((iterations - threadStartingRow) + (rowsPerThread - (ImagePixelsValues.Length - (threadStartingRow - iterations))))][];
+                    for (int j = 0; j < threadsValuesToCompute[i].Length; j++)
                     {
-                        for (int y = ImagePixelsValues.Length - (threadStartingRow - iterations); y < rowsPerThread; y++)
+                        threadsValuesToCompute[i][j] = new float[width];
+                        ImagePixelsValues[j].CopyTo(threadsValuesToCompute[i][j], 0);
+                    }
+                }
+            }
+            return threadsValuesToCompute;
+        }
+        private float[][][] DivideImagePixelValuesBetweenThreadsWithZeroFillers(int amountOfRowsToApplyFilterOnBySingleThread, int iterations, int width)
+        {
+            int rowsPerThread = amountOfRowsToApplyFilterOnBySingleThread + iterations * 2;
+            float[][][] threadsValuesToCompute = new float[ThreadAmount][][];
+            for (int i = 0; i < ThreadAmount; i++)
+            {
+                if (i == ThreadAmount - 1)
+                {
+                    rowsPerThread = (ImagePixelsValues.Length - i * amountOfRowsToApplyFilterOnBySingleThread) + iterations * 2;
+                }
+                threadsValuesToCompute[i] = new float[rowsPerThread][];
+                for (int j = 0; j < rowsPerThread; j++)
+                {
+                    threadsValuesToCompute[i][j] = new float[width];
+                }
+            }
+            rowsPerThread = amountOfRowsToApplyFilterOnBySingleThread + iterations * 2;
+            int threadStartingRow;
+            int rowToCopyIndex;
+            for (int i = 0; i < ThreadAmount; i++)
+            {
+                threadStartingRow = i * amountOfRowsToApplyFilterOnBySingleThread;
+                if (i == ThreadAmount - 1)
+                {
+                    rowsPerThread = (ImagePixelsValues.Length - i * amountOfRowsToApplyFilterOnBySingleThread) + iterations * 2;
+                }
+                if (threadStartingRow - iterations >= 0 && rowsPerThread + threadStartingRow - iterations < ImagePixelsValues.Length)
+                {
+                    rowToCopyIndex = threadStartingRow - iterations;
+                    for (int j = 0; j < rowsPerThread; j++)
+                    {
+                        ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
+                        rowToCopyIndex++;
+                    }
+                }
+                else if (threadStartingRow - iterations < 0 && threadStartingRow - iterations + rowsPerThread < ImagePixelsValues.Length)
+                {
+                    rowToCopyIndex = 0;
+                    for (int d = 0; d < (iterations - threadStartingRow); d++)
+                    {
+                        for (int m = 0; m < width; m++)
                         {
-                            for (int m = 0; m < width; m++)
-                            {
-                                threadsValuesToCompute[i][y][m] = 0;
-                            }
+                            threadsValuesToCompute[i][d][m] = 0;
+                        }
+                    }
+                    for (int j = (iterations - threadStartingRow); j < rowsPerThread; j++)
+                    {
+                        ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
+                        rowToCopyIndex++;
+                    }
+                }
+                else if (threadStartingRow - iterations >= 0 && threadStartingRow - iterations + rowsPerThread > ImagePixelsValues.Length)
+                {
+                    rowToCopyIndex = (threadStartingRow - iterations);
+                    for (int j = 0; j < ImagePixelsValues.Length - (threadStartingRow - iterations); j++)
+                    {
+                        ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
+                        rowToCopyIndex++;
+                    }
+                    for (int y = ImagePixelsValues.Length - (threadStartingRow - iterations); y < rowsPerThread; y++)
+                    {
+                        for (int m = 0; m < width; m++)
+                        {
+                            threadsValuesToCompute[i][y][m] = 0;
                         }
                     }
                 }
                 else
                 {
                     rowToCopyIndex = 0;
-                    if (fillMissingPixelsWithZeros)
+                    for (int d = 0; d < (iterations - threadStartingRow); d++)
                     {
-                        for (int d = 0; d < (iterations - threadStartingRow); d++)
+                        for (int m = 0; m < width; m++)
                         {
-                            for (int m = 0; m < width; m++)
-                            {
-                                threadsValuesToCompute[i][d][m] = 0;
-                            }
-                        }
-                        for (int j = (iterations - threadStartingRow); j < ImagePixelsValues.Length - (threadStartingRow - iterations); j++)
-                        {
-                            ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
-                            rowToCopyIndex++;
-                        }
-                        for (int y = ImagePixelsValues.Length - (threadStartingRow - iterations); y < rowsPerThread; y++)
-                        {
-                            for (int m = 0; m < width; m++)
-                            {
-                                threadsValuesToCompute[i][y][m] = 0;
-                            }
+                            threadsValuesToCompute[i][d][m] = 0;
                         }
                     }
-                    else
+                    for (int j = (iterations - threadStartingRow); j < ImagePixelsValues.Length - (threadStartingRow - iterations); j++)
                     {
-                        fragmentsToComputeStartingRowsInnerIndexes[i] = iterations - (iterations - threadStartingRow);
-                        threadsValuesToCompute[i] = new float[rowsPerThread - ((iterations - threadStartingRow) + (rowsPerThread - (ImagePixelsValues.Length - (threadStartingRow - iterations))))][];
-                        for (int j = 0; j < threadsValuesToCompute[i].Length; j++)
+                        ImagePixelsValues[rowToCopyIndex].CopyTo(threadsValuesToCompute[i][j], 0);
+                        rowToCopyIndex++;
+                    }
+                    for (int y = ImagePixelsValues.Length - (threadStartingRow - iterations); y < rowsPerThread; y++)
+                    {
+                        for (int m = 0; m < width; m++)
                         {
-                            threadsValuesToCompute[i][j] = new float[width];
-                            ImagePixelsValues[j].CopyTo(threadsValuesToCompute[i][j], 0);
+                            threadsValuesToCompute[i][y][m] = 0;
                         }
                     }
                 }

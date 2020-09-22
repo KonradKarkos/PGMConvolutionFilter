@@ -7,15 +7,35 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ImageTextRepresentation">
-
-    <Grid Background="#FFE5E5E5">
-        <TextBox x:Name="plainImageDisplayTextBox" HorizontalAlignment="Left" Height="356" Margin="10,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
-        <TextBox x:Name="synchronouslyFilteredImageDisplayTextBox" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
-        <TextBlock x:Name="plainImageDisplayTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Plain image in PGM format:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="filteredImageDisplayTextBlock" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Result image:" VerticalAlignment="Top"/>
-        <Button x:Name="switchDisplayedResultsButton" Content="Synchronous" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="switchDisplayedResultsButton_Click"/>
-        <TextBox x:Name="asynchronouslyFilteredImageDisplayTextBox" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" Width="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" Visibility="Hidden" IsReadOnly="True"/>
-        <TextBlock x:Name="equalResultsTextBlock" HorizontalAlignment="Left" Margin="403,386,0,0" TextWrapping="Wrap" Text="Are synchronous and asynchronous results the same:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="displayEqualResultsTextBlock" HorizontalAlignment="Left" Margin="688,389,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+    <Page.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="10,10,0,0"></Setter>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextFieldTextBox}">
+            <Setter Property="Margin" Value="10,10,0,0"></Setter>
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+            <Setter Property="Margin" Value="10,10,10,0"></Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <DockPanel LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock x:Name="plainImageDisplayTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Plain image in PGM format:" VerticalAlignment="Top" Height="{Binding ActualHeight, ElementName=switchDisplayedResultsButton}"/>
+                <TextBox x:Name="plainImageDisplayTextBox" HorizontalAlignment="Left" MaxHeight="350" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" MaxWidth="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right">
+                <DockPanel LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" x:Name="filteredImageDisplayTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Result image:" VerticalAlignment="Top"/>
+                    <Button DockPanel.Dock="Right" x:Name="switchDisplayedResultsButton" Content="Synchronous" HorizontalAlignment="Left" VerticalAlignment="Top" Click="switchDisplayedResultsButton_Click"/>
+                </DockPanel>
+                <TextBox x:Name="synchronouslyFilteredImageDisplayTextBox" HorizontalAlignment="Right" MaxHeight="350" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" MaxWidth="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" IsReadOnly="True"/>
+                <TextBox x:Name="asynchronouslyFilteredImageDisplayTextBox" HorizontalAlignment="Right" MaxHeight="350" TextWrapping="NoWrap" Text="" VerticalAlignment="Top" MaxWidth="375" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" AcceptsTab="True" Visibility="Collapsed" IsReadOnly="True"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <TextBlock x:Name="equalResultsTextBlock" TextWrapping="Wrap" Text="Are synchronous and asynchronous results the same:"/>
+                    <TextBlock x:Name="displayEqualResultsTextBlock" TextWrapping="Wrap" />
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Page>

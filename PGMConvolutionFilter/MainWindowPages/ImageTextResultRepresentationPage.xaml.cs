@@ -20,14 +20,14 @@ namespace PGMConvolutionFilter
         {
             if (synchronouslyFilteredImageDisplayTextBox.Visibility == Visibility.Visible)
             {
+                synchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Collapsed;
                 asynchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Visible;
-                synchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Hidden;
                 switchDisplayedResultsButton.Content = "Asynchronous";
             }
             else
             {
+                asynchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Collapsed;
                 synchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Visible;
-                asynchronouslyFilteredImageDisplayTextBox.Visibility = Visibility.Hidden;
                 switchDisplayedResultsButton.Content = "Synchronous";
             }
         }

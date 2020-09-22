@@ -5,15 +5,30 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PGMConvolutionFilter"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="550" d:DesignWidth="1050"
       Title="ImageVisualResultRepresentationPage">
-
-    <Grid Background="#FFE5E5E5">
-        <Image x:Name="plainImage" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" VerticalAlignment="Top" Width="375"/>
-        <Image x:Name="synchronouslyFilteredImage" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Visible"/>
-        <TextBlock x:Name="plainImageTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Plain image in PGM format:" VerticalAlignment="Top"/>
-        <TextBlock x:Name="filteredImageTextBlock" HorizontalAlignment="Left" Margin="403,10,0,0" TextWrapping="Wrap" Text="Result image:" VerticalAlignment="Top"/>
-        <Button x:Name="switchDisplayedResultsButton" Content="Synchronous" HorizontalAlignment="Left" Margin="678,7,0,0" VerticalAlignment="Top" Width="100" Click="switchDisplayedResultsButton_Click"/>
-        <Image x:Name="asynchronouslyFilteredImage" HorizontalAlignment="Left" Height="350" Margin="403,31,0,0" VerticalAlignment="Top" Width="375" Visibility="Hidden"/>
+    <Page.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="10,10,0,0"></Setter> 
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+            <Setter Property="Margin" Value="10,10,10,0"></Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <DockPanel LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock x:Name="plainImageTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Plain image in PGM format:" VerticalAlignment="Top" TextAlignment="Center" Height="{Binding ActualHeight, ElementName=switchDisplayedResultsButton}"/>
+                <Image x:Name="plainImage" HorizontalAlignment="Left" MaxHeight="512" VerticalAlignment="Top" MaxWidth="512"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right">
+                <DockPanel LastChildFill="false">
+                    <TextBlock DockPanel.Dock="Left" x:Name="filteredImageTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Result image:" VerticalAlignment="Top"/>
+                    <Button DockPanel.Dock="Right" x:Name="switchDisplayedResultsButton" Content="Synchronous" HorizontalAlignment="Left" VerticalAlignment="Top" Click="switchDisplayedResultsButton_Click"/>
+                </DockPanel>
+                <Image x:Name="synchronouslyFilteredImage" MaxHeight="512" MaxWidth="512" Visibility="Visible"/>
+                    <Image x:Name="asynchronouslyFilteredImage" MaxHeight="512" MaxWidth="512" Visibility="Collapsed"/>
+                </StackPanel>
+        </DockPanel>
     </Grid>
 </Page>

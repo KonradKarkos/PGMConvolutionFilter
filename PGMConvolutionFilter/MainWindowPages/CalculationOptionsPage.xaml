@@ -5,17 +5,28 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PGMConvolutionFilter.MainWindowPages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="CalculationOptionsPage">
-
-    <Grid Background="#FFE5E5E5">
-        <RadioButton x:Name="dependentThreadsRadioButton" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="Metody" Width="441"/>
-        <RadioButton x:Name="independentThreadsWithoutZeroDataFillingRadioButton" Content="" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" GroupName="Metody" Width="644"/>
-        <RadioButton x:Name="independentThreadsWithZeroDataFillingRadioButton" Content="" HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top" GroupName="Metody" Width="728" Height="32"/>
-        <TextBlock x:Name="dependentThreadsTextBlock" HorizontalAlignment="Left" Margin="29,10,0,0" TextWrapping="Wrap" Text="Create new threads every iteration and pass whole image" VerticalAlignment="Top"/>
-        <TextBlock x:Name="independentThreadsWithoutZeroDataFillingTextBlock" HorizontalAlignment="Left" Margin="29,30,0,0" TextWrapping="Wrap" Text="Create independent threads that will get whole, needed for calculation, image fragment if it doesn't exceed image dimensions" VerticalAlignment="Top"/>
-        <TextBlock x:Name="independentThreadsWithZeroDataFillingTextBlock" HorizontalAlignment="Left" Margin="29,51,0,0" TextWrapping="Wrap" Text="Create idenpendent threads that will get whole, nedeed for calculation, image fragment which parts that exceed image dimensions will be filled with zeros (differences in black frame at the top and bottom)" VerticalAlignment="Top" Width="709"/>
-        <TextBox x:Name="calculationRepeatsTextBox" HorizontalAlignment="Left" Height="16" Margin="503,368,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="120" PreviewTextInput="AllowOnlyDigits"/>
-        <TextBlock x:Name="calculationRepeatsTextBlock" HorizontalAlignment="Left" Margin="10,366,0,0" TextWrapping="Wrap" Text="Repeats amount of synchronous and asynchronous calculations to average computing time: " VerticalAlignment="Top"/>
+      Title="CalculationOptionsPage"
+      x:Name="parentPage">
+    <Page.Resources>
+        <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignAccentRadioButton}">
+            <Setter Property="Margin" Value="10,10,0,0"></Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <DockPanel LastChildFill="False">
+            <RadioButton DockPanel.Dock="Top" x:Name="dependentThreadsRadioButton" VerticalAlignment="Top" IsChecked="True" GroupName="asynchronousMethods">
+                <TextBlock x:Name="dependentThreadsTextBlock" TextWrapping="Wrap" Text="Create new threads every iteration and pass whole image" VerticalAlignment="Center"/>
+            </RadioButton>
+            <RadioButton DockPanel.Dock="Top" x:Name="independentThreadsWithoutZeroDataFillingRadioButton" HorizontalAlignment="Left" VerticalAlignment="Top" GroupName="asynchronousMethods">
+                <TextBlock x:Name="independentThreadsWithoutZeroDataFillingTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Create independent threads that will get whole, needed for calculation, image fragment if it doesn't exceed image dimensions" VerticalAlignment="Top"/>
+            </RadioButton>
+            <RadioButton DockPanel.Dock="Top" x:Name="independentThreadsWithZeroDataFillingRadioButton" HorizontalAlignment="Left" VerticalAlignment="Top" GroupName="asynchronousMethods">
+                <TextBlock x:Name="independentThreadsWithZeroDataFillingTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Create idenpendent threads that will get whole, nedeed for calculation, image fragment which parts that exceed image dimensions will be filled with zeros (differences in black frame at the top and bottom)" VerticalAlignment="Top"/>
+            </RadioButton>
+            <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                <TextBlock x:Name="calculationRepeatsTextBlock" TextWrapping="Wrap" Text="Repeats amount of synchronous and asynchronous calculations to average computing time: " Margin="10,10,0,0"/>
+                <TextBox x:Name="calculationRepeatsTextBox" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" PreviewTextInput="AllowOnlyDigits" Margin="0,6,0,0"/>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Page>

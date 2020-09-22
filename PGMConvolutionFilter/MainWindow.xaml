@@ -5,16 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PGMConvolutionFilter"
         mc:Ignorable="d"
-        Title="Convolution filter" Height="450" Width="800">
-    <Grid>
-        <StackPanel>
-        <TabControl x:Name="tabControl" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged">
-                <TabItem x:Name="logsAndOptionsTabItem" Header="Logs and options"/>
-                <TabItem x:Name="textResultsTabItem" Header="Text results"/>
-                <TabItem x:Name="imageResultsTabItem" Header="Image results"/>
-                <TabItem x:Name="asynchronousMethodsTabItem" Header="Choose asynchronous method"/>
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:math="http://hexinnovation.com/math"
+        Title="Convolution filter" Width="1000">
+    <Window.Resources>
+        <math:MathConverter x:Key="math" />
+    </Window.Resources>
+    <Grid Background="#E5E5E5">
+        <DockPanel LastChildFill="True">
+            <TabControl DockPanel.Dock="Top" x:Name="tabControl" VerticalAlignment="Top" SelectionChanged="tabControl_SelectionChanged" Style="{StaticResource MaterialDesignAppBarTabControl}">
+                <TabItem x:Name="logsAndOptionsTabItem" Header="Logs and options" Width="{Binding ActualWidth, ElementName=tabControl, Converter={StaticResource math}, ConverterParameter=x/4}"/>
+                <TabItem x:Name="textResultsTabItem" Header="Text results" Width="{Binding ActualWidth, ElementName=tabControl, Converter={StaticResource math}, ConverterParameter=x/4}"/>
+                <TabItem x:Name="imageResultsTabItem" Header="Image results" Width="{Binding ActualWidth, ElementName=tabControl, Converter={StaticResource math}, ConverterParameter=x/4}"/>
+                <TabItem x:Name="asynchronousMethodsTabItem" Header="Choose asynchronous method" Width="{Binding ActualWidth, ElementName=tabControl, Converter={StaticResource math}, ConverterParameter=x/4}"/>
             </TabControl>
-        <Frame x:Name="mainFrame" NavigationUIVisibility="Hidden"></Frame>
-        </StackPanel>
+            <Frame DockPanel.Dock="Top" x:Name="mainFrame" NavigationUIVisibility="Hidden"></Frame>
+        </DockPanel>
     </Grid>
 </Window>

@@ -5,34 +5,60 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:PGMConvolutionFilter"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="LogsAndInputOutputOptions">
-
-    <Grid Background="#E5E5E5">
-        <TextBox x:Name="logsTextBox" HorizontalAlignment="Left" Height="350" Margin="10,31,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="388" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-        <TextBlock x:Name="logsTextBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Logs of programs performance:" VerticalAlignment="Top"/>
-        <Button x:Name="helpButton" Content="Help" HorizontalAlignment="Left" Margin="703,10,0,0" VerticalAlignment="Top" Width="75" Click="HelpButton_Click"/>
-        <Button x:Name="startButton" Content="Start" HorizontalAlignment="Left" Margin="703,362,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="startButton_Click"/>
-        <Button x:Name="saveResultImageButton" Content="Save as image" HorizontalAlignment="Left" Margin="403,249,0,0" VerticalAlignment="Top" Width="375" Click="saveResultImageButton_Click" IsEnabled="False"/>
-        <TextBox x:Name="resultImageSavingFilePathTextBox" HorizontalAlignment="Left" Height="19" Margin="403,273,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-        <Button x:Name="loadImageToComputeButton" Content="Load from file" HorizontalAlignment="Left" Margin="403,105,0,0" VerticalAlignment="Top" Width="185" Click="loadImageToComputeButton_Click" IsEnabled="False"/>
-        <Button x:Name="saveResultImageAsBinaryButton" Content="Save as binary file" HorizontalAlignment="Left" Margin="403,153,0,0" VerticalAlignment="Top" Width="375" IsEnabled="False" Click="saveResultImageAsBinaryButton_Click"/>
-        <TextBox x:Name="imageToComputeFilePathTextBox" HorizontalAlignment="Left" Height="19" Margin="403,129,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375" IsEnabled="False" TextChanged="imageToComputeFilePathTextBox_TextChanged"/>
-        <TextBox x:Name="resultImageBinarySavingFilePathTextBox" HorizontalAlignment="Left" Height="19" Margin="403,177,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-        <Button x:Name="chooseFileToComputeButton" Content="Choose file" HorizontalAlignment="Left" Margin="593,105,0,0" VerticalAlignment="Top" Width="185" Click="chooseFileToComputeButton_Click"/>
-        <Button x:Name="saveResultImageAsTextButton" Content="Save as text file" HorizontalAlignment="Left" Margin="403,201,0,0" VerticalAlignment="Top" Width="375" Click="saveResultImageAsTextButton_Click" IsEnabled="False"/>
-        <TextBox x:Name="resultImageTextSavingFilePathTextBox" HorizontalAlignment="Left" Height="19" Margin="403,225,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="375"/>
-        <CheckBox x:Name="useDefaultImageToComputeCheckBox" Content="Use default empty image" HorizontalAlignment="Left" Margin="403,362,0,0" VerticalAlignment="Top" Checked="useDefaultImageToComputeCheckBox_Checked" Unchecked="useDefaultImageToComputeCheckBox_Unchecked"/>
-        <ProgressBar x:Name="PB" HorizontalAlignment="Left" Height="29" Margin="403,71,0,0" VerticalAlignment="Top" Width="375" Maximum="2" Visibility="Hidden" Value="0" Minimum="0"/>
-        <TextBlock x:Name="iterationsAmountTextBlock" HorizontalAlignment="Left" Margin="403,321,0,0" TextWrapping="Wrap" Text="Iterations:" VerticalAlignment="Top"/>
-        <TextBox x:Name="iterationsAmountTextBox" HorizontalAlignment="Left" Height="16" Margin="473,321,0,0" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" Width="120" PreviewTextInput="AllowOnlyDigits"/>
-        <TextBlock x:Name="threadAmountTextBlock" HorizontalAlignment="Left" Margin="598,321,0,0" TextWrapping="Wrap" Text="Threads:" VerticalAlignment="Top"/>
-        <TextBox x:Name="threadAmountTextBox" HorizontalAlignment="Left" Height="16" Margin="673,321,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" Width="105" PreviewTextInput="AllowOnlyDigits"/>
-        <Button x:Name="saveLogsButton" Content="Save logs to result file" HorizontalAlignment="Left" Margin="403,297,0,0" VerticalAlignment="Top" Width="375" Click="saveLogsButton_Click"/>
-        <TextBox x:Name="defaultImageDimensionsTextBox" HorizontalAlignment="Left" Height="17" Margin="606,362,0,0" TextWrapping="Wrap" Text="1024" VerticalAlignment="Top" Width="39" PreviewTextInput="AllowOnlyDigits" TextChanged="defaultImageDimensionsTextBox_TextChanged"/>
-        <TextBlock x:Name="defaultImageDimensionsTextBlock" HorizontalAlignment="Left" Margin="650,362,0,0" TextWrapping="Wrap" Text="x1024" VerticalAlignment="Top" Width="38"/>
-        <CheckBox x:Name="createCheckerBoardCheckBox" Content="Change default image to checkerboard:" HorizontalAlignment="Left" Margin="403,342,0,0" VerticalAlignment="Top" IsEnabled="False"/>
-        <TextBox x:Name="checkerBoardFieldAmountTextBox" HorizontalAlignment="Left" Height="17" Margin="686,340,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="33" IsEnabled="False" PreviewTextInput="AllowOnlyDigits" TextChanged="checkerBoardFieldAmountTextBox_TextChanged"/>
-        <TextBlock x:Name="checkerBoardFieldAmountTextBlock" HorizontalAlignment="Left" Margin="724,341,0,0" TextWrapping="Wrap" Text="x8" VerticalAlignment="Top" Width="38"/>
+    <Page.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="10,10,10,0"></Setter>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+            <Setter Property="Margin" Value="10,10,10,0"></Setter>
+        </Style>
+        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatMidBgButton}">
+            <Setter Property="Margin" Value="10,10,10,0"></Setter>
+        </Style>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource MaterialDesignAccentCheckBox}">
+            <Setter Property="Margin" Value="10,10,10,0"></Setter>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <StackPanel>
+                <TextBlock x:Name="logsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Logs of programs performance:" VerticalAlignment="Top"/>
+                <TextBox x:Name="logsTextBox" HorizontalAlignment="Left" Height="350" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="388" IsReadOnly="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource MaterialDesignOutlinedTextFieldTextBox}"/>
+                <Button x:Name="helpButton" Content="Help" HorizontalAlignment="Left" VerticalAlignment="Top" Click="HelpButton_Click"/>
+            </StackPanel>
+            <StackPanel>
+                <ProgressBar x:Name="PB" HorizontalAlignment="Stretch" Height="30" VerticalAlignment="Top" Visibility="Hidden" Value="0" Minimum="0" Margin="10,10"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="loadImageToComputeButton" Content="Load from file" Width="185" Click="loadImageToComputeButton_Click" IsEnabled="False"/>
+                    <Button x:Name="chooseFileToComputeButton" Content="Choose file" Width="185" Click="chooseFileToComputeButton_Click"/>
+                </StackPanel>
+                <TextBox x:Name="imageToComputeFilePathTextBox" HorizontalAlignment="Stretch" TextWrapping="Wrap" IsEnabled="False" TextChanged="imageToComputeFilePathTextBox_TextChanged"/>
+                <Button x:Name="saveResultImageAsBinaryButton" Content="Save as binary file" HorizontalAlignment="Stretch" IsEnabled="False" Click="saveResultImageAsBinaryButton_Click"/>
+                <TextBox x:Name="resultImageBinarySavingFilePathTextBox" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                <Button x:Name="saveResultImageAsTextButton" Content="Save as text file" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="saveResultImageAsTextButton_Click" IsEnabled="False"/>
+                <TextBox x:Name="resultImageTextSavingFilePathTextBox" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                <Button x:Name="saveResultImageButton" Content="Save as image" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="saveResultImageButton_Click" IsEnabled="False"/>
+                <TextBox x:Name="resultImageSavingFilePathTextBox" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                <Button x:Name="saveLogsButton" Content="Save logs to result file" HorizontalAlignment="Stretch" VerticalAlignment="Top" Click="saveLogsButton_Click"/>
+                <DockPanel LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" x:Name="iterationsAmountTextBlock" TextWrapping="Wrap" Text="Iterations:" VerticalAlignment="Top"/>
+                    <TextBox DockPanel.Dock="Left" x:Name="iterationsAmountTextBox" TextWrapping="Wrap" Text="200" VerticalAlignment="Top" PreviewTextInput="AllowOnlyDigits" Margin="0,7"/>
+                    <TextBox DockPanel.Dock="Right" x:Name="threadAmountTextBox" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" PreviewTextInput="AllowOnlyDigits" Margin="0,7,10,0"/>
+                    <TextBlock DockPanel.Dock="Right" x:Name="threadAmountTextBlock" TextWrapping="Wrap" Text="Threads:" VerticalAlignment="Top"/>
+                </DockPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="createCheckerBoardCheckBox" Content="Change default image to checkerboard:" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"/>
+                    <TextBox x:Name="checkerBoardFieldAmountTextBox" TextWrapping="Wrap" Text="8" Margin="0,8" IsEnabled="False" PreviewTextInput="AllowOnlyDigits" TextChanged="checkerBoardFieldAmountTextBox_TextChanged"/>
+                    <TextBlock x:Name="checkerBoardFieldAmountTextBlock" TextWrapping="Wrap" Text="x8" Margin="0,12"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox x:Name="useDefaultImageToComputeCheckBox" Content="Use default empty image" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="useDefaultImageToComputeCheckBox_Checked" Unchecked="useDefaultImageToComputeCheckBox_Unchecked"/>
+                    <TextBox x:Name="defaultImageDimensionsTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="1024" VerticalAlignment="Top" PreviewTextInput="AllowOnlyDigits" TextChanged="defaultImageDimensionsTextBox_TextChanged" Margin="10,10,0,0"/>
+                    <TextBlock x:Name="defaultImageDimensionsTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="x1024" VerticalAlignment="Top" Margin="0,14"/>
+                    <Button x:Name="startButton" Content="Start" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" Click="startButton_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>
